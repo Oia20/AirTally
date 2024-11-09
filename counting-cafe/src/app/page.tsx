@@ -1,7 +1,13 @@
 "use client";
 
-import Folders from "./Folders";
+import Folders from "./folders";
+import Navbar from "./Navbar";
 
 export default function Home() {
-  return <Folders />;
+  return (
+    <>
+    <Navbar />
+    <Folders />
+    </>
+  )
 }

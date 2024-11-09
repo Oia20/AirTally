@@ -3,7 +3,6 @@
 
 import { useState } from "react";
 import Folder from "./Folder";
-import Navbar from "./Navbar";
 import { CounterProps, FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -121,6 +120,7 @@ const Folders = () => {
   };
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50">
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-4xl mx-auto">
@@ -168,6 +168,7 @@ const Folders = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 
