@@ -7,67 +7,21 @@ import { CounterProps, FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 
 const initialFolders: FolderProps[] = [
-  {
-    id: uuidv4(),
-    title: "Daily Counters",
-    counters: [
-      {
-        id: uuidv4(), name: "Coffee Cups", incrementBy: 1, initialValue: 0,
-        onDelete: function (): void {
-          throw new Error("Function not implemented.");
-        }
-      },
-      {
-        id: uuidv4(), name: "Water Glasses", incrementBy: 1, initialValue: 0,
-        onDelete: function (): void {
-          throw new Error("Function not implemented.");
-        }
-      },
-    ],
-    onDelete: function (id: string): void {
-      throw new Error("Function not implemented.");
-    },
-    onAddCounter: function (folderId: string, counter: Omit<CounterProps, "onDelete">): void {
-      throw new Error("Function not implemented.");
-    },
-    onDeleteCounter: function (folderId: string, counterId: string): void {
-      throw new Error("Function not implemented.");
-    }
-  },
-  {
-    id: uuidv4(),
-    title: "Work Tasks",
-    counters: [
-      {
-        id: uuidv4(), name: "Completed Tasks", incrementBy: 1, initialValue: 0,
-        onDelete: function (): void {
-          throw new Error("Function not implemented.");
-        }
-      },
-      {
-        id: uuidv4(), name: "Meetings", incrementBy: 1, initialValue: 0,
-        onDelete: function (): void {
-          throw new Error("Function not implemented.");
-        }
-      },
-    ],
-    onDelete: function (id: string): void {
-      throw new Error("Function not implemented.");
-    },
-    onAddCounter: function (folderId: string, counter: Omit<CounterProps, "onDelete">): void {
-      throw new Error("Function not implemented.");
-    },
-    onDeleteCounter: function (folderId: string, counterId: string): void {
-      throw new Error("Function not implemented.");
-    }
-  },
+  
 ];
 
-const Folders = () => {
+// Modify the component definition to accept props
+const Folders = ({ 
+  isAddingFolder, 
+  setIsAddingFolder 
+}: { 
+  isAddingFolder: boolean; 
+  setIsAddingFolder: (value: boolean) => void;
+}) => {
   const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
-  const [isAddingFolder, setIsAddingFolder] = useState(false);
   const [newFolderTitle, setNewFolderTitle] = useState("");
 
+  // Rest of the code remains the same...
   const addFolder = () => {
     if (newFolderTitle.trim()) {
       setFolders([
