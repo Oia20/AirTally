@@ -90,7 +90,7 @@ const Folders = ({
                 value={newFolderTitle}
                 onChange={(e) => setNewFolderTitle(e.target.value)}
                 placeholder="Folder name"
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-gray-900"
                 autoFocus
               />
               <button

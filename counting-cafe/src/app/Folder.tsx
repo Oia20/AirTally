@@ -68,7 +68,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                 value={newCounterName}
                 onChange={(e) => setNewCounterName(e.target.value)}
                 placeholder="Counter name"
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-gray-900"
                 autoFocus
               />
               <button

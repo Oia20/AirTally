@@ -57,7 +57,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue = 0, onDelete }: Coun
             type="number"
             value={step}
             onChange={(e) => setStep(Math.max(1, Number(e.target.value)))}
-            className="w-16 px-2 py-1 border rounded-md text-center"
+            className="w-16 px-2 py-1 border rounded-md text-center text-gray-900"
             min="1"
           />
         </div>
