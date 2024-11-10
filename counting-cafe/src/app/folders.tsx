@@ -19,13 +19,13 @@ const initialFolders: FolderProps[] = [
       }
     ] // Initialize counters as an empty array if there are no initial counters
     ,
-    onDelete: function (id: string): void {
+    onDelete: function (_id?: string): void {
       throw new Error("Function not implemented.");
     },
-    onAddCounter: function (folderId: string, counter: Omit<CounterProps, "onDelete">): void {
+    onAddCounter: function (_folderId: string, _counter: Omit<CounterProps, "onDelete">): void {
       throw new Error("Function not implemented.");
     },
-    onDeleteCounter: function (folderId: string, counterId: string): void {
+    onDeleteCounter: function (_folderId: string, _counterId: string): void {
       throw new Error("Function not implemented.");
     }
   }
@@ -51,13 +51,13 @@ const Folders = ({
           id: uuidv4(),
           title: newFolderTitle,
           counters: [],
-          onDelete: function (id: string): void {
+          onDelete: function (_id: string): void {
             throw new Error("Function not implemented.");
           },
-          onAddCounter: function (folderId: string, counter: Omit<CounterProps, "onDelete">): void {
+          onAddCounter: function (_folderId: string, _counter: Omit<CounterProps, "onDelete">): void {
             throw new Error("Function not implemented.");
           },
-          onDeleteCounter: function (folderId: string, counterId: string): void {
+          onDeleteCounter: function (_folderId: string, _counterId: string): void {
             throw new Error("Function not implemented.");
           }
         },
