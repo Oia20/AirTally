@@ -7,7 +7,28 @@ import { CounterProps, FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 
 const initialFolders: FolderProps[] = [
-  
+  {
+    id: uuidv4(),
+    title: "Welcome!",
+    counters: [
+      {
+        id: uuidv4(), name: "Welcome to Counting Café", incrementBy: 1, initialValue: 0,
+        onDelete: function (): void {
+          throw new Error("Function not implemented.");
+        }
+      }
+    ] // Initialize counters as an empty array if there are no initial counters
+    ,
+    onDelete: function (id: string): void {
+      throw new Error("Function not implemented.");
+    },
+    onAddCounter: function (folderId: string, counter: Omit<CounterProps, "onDelete">): void {
+      throw new Error("Function not implemented.");
+    },
+    onDeleteCounter: function (folderId: string, counterId: string): void {
+      throw new Error("Function not implemented.");
+    }
+  }
 ];
 
 // Modify the component definition to accept props
@@ -80,7 +101,7 @@ const Folders = ({
         <div className="max-w-4xl mx-auto">
           <header className="text-center mb-12">
             <h1 className="text-3xl font-semibold text-gray-900 mb-3">Counting Café</h1>
-            <p className="text-gray-500">Track and count anything you want</p>
+            <p className="text-gray-500">The web app for counting... Anything!</p>
           </header>
 
           {isAddingFolder && (
