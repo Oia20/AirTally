@@ -12,15 +12,27 @@ const Folders = () => {
   const { isAddingFolder, setIsAddingFolder } = useContext(FolderContext);
   const [folders, setFolders] = useState<FolderProps[]>([]);
   const [newFolderTitle, setNewFolderTitle] = useState("");
+  
+  interface DatabaseCounter {
+    id: number;
+    name: string;
+    increment: number;
+    initial: number;
+  }
+  interface DatabaseFolder {
+    id: number;
+    title: string;
+    counters: DatabaseCounter[];
+  }
+  const fetchFolders = async () => {
+    const response = await fetch('/api/folders');
+    const data: DatabaseFolder[] = await response.json();
+    setFolders(data.map(mapDatabaseFolder));
+  };
 
   useEffect(() => {
-    const fetchFolders = async () => {
-      const response = await fetch('/api/folders');
-      const data = await response.json();
-      setFolders(data.map(mapDatabaseFolder));
-    };
     fetchFolders();
-  }, []);
+  }, [fetchFolders]);
 
 
 
