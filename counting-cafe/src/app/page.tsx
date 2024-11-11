@@ -1,20 +1,11 @@
 import Folders from "./folders";
 import Navbar from "./Navbar";
 import { FolderProvider } from "./folderContext";
-import {GET} from "./api/users";
 
 export default async function Home() {
-  const users = await GET();
-  const userData = await users.json();
 
   return (
     <>
-      {userData.map((user:any) => (
-        <div key={user.id}>
-          <h2>{user.name}</h2>
-          <p>{user.email}</p>
-        </div>
-      ))}
       <FolderProvider>
         <Navbar />
         {/* <div className="p-4">
