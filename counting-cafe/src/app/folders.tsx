@@ -1,76 +1,84 @@
 // folders.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Folder from "./Folder";
 import { CounterProps, FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
+import { useContext } from "react";
+import { FolderContext } from "./folderContext";
 
-const initialFolders: FolderProps[] = [
-  {
-    id: uuidv4(),
-    title: "Welcome!",
-    counters: [
-      {
-        id: uuidv4(), name: "Welcome to Counting Café", incrementBy: 1, initialValue: 0,
-        onDelete: function (): void {
-          throw new Error("Function not implemented.");
-        }
-      }
-    ] // Initialize counters as an empty array if there are no initial counters
-    ,
-    onDelete: function (): void {
-      throw new Error("Function not implemented.");
-    },
-    onAddCounter: function (): void {
-      throw new Error("Function not implemented.");
-    },
-    onDeleteCounter: function (): void {
-      throw new Error("Function not implemented.");
-    }
-  }
-];
-
-// Modify the component definition to accept props
-const Folders = ({ 
-  isAddingFolder, 
-  setIsAddingFolder 
-}: { 
-  isAddingFolder: boolean; 
-  setIsAddingFolder: (value: boolean) => void;
-}) => {
-  const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
+const Folders = () => {
+  const { isAddingFolder, setIsAddingFolder } = useContext(FolderContext);
+  const [folders, setFolders] = useState<FolderProps[]>([]);
   const [newFolderTitle, setNewFolderTitle] = useState("");
 
-  // Rest of the code remains the same...
-  const addFolder = () => {
+  useEffect(() => {
+    fetchFolders();
+  }, []);
+
+  const fetchFolders = async () => {
+    const response = await fetch('/api/folders');
+    const data = await response.json();
+    setFolders(data.map(mapDatabaseFolder));
+  };
+
+  const mapDatabaseFolder = (dbFolder: any): FolderProps => ({
+    id: dbFolder.id.toString(),
+    title: dbFolder.title,
+    counters: dbFolder.counters.map((counter: any) => ({
+      id: counter.id.toString(),
+      name: counter.name,
+      incrementBy: counter.increment,
+      initialValue: counter.initial,
+      onDelete: () => {},
+    })),
+    onDelete: () => {},
+    onAddCounter: () => {},
+    onDeleteCounter: () => {},
+  });
+
+  const addFolder = async () => {
     if (newFolderTitle.trim()) {
-      setFolders([
-        ...folders,
-        {
-          id: uuidv4(),
-          title: newFolderTitle,
-          counters: [],
-          onDelete: function (): void {
-            throw new Error("Function not implemented.");
-          },
-          onAddCounter: function (): void {
-            throw new Error("Function not implemented.");
-          },
-          onDeleteCounter: function (): void {
-            throw new Error("Function not implemented.");
-          }
-        },
-      ]);
+      // Optimistic update
+      const tempId = uuidv4();
+      const newFolder = {
+        id: tempId,
+        title: newFolderTitle,
+        counters: [],
+        onDelete: () => {},
+        onAddCounter: () => {},
+        onDeleteCounter: () => {},
+      };
+      setFolders([...folders, newFolder]);
+
+      // API call
+      const response = await fetch('/api/folders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newFolderTitle }),
+      });
+
+      if (response.ok) {
+        fetchFolders(); // Refresh to get the actual database ID
+      }
+
       setNewFolderTitle("");
       setIsAddingFolder(false);
     }
   };
 
-  const deleteFolder = (folderId: string) => {
+  const deleteFolder = async (folderId: string) => {
+    // Optimistic update
     setFolders(folders.filter((folder) => folder.id !== folderId));
+
+    // API call
+    await fetch(`/api/folders?id=${folderId}`, {
+      method: 'DELETE',
+    });
   };
 
+  // ... rest of the component remains similar but with API calls
   const addCounter = (folderId: string, counter: Omit<CounterProps, 'onDelete'>) => {
     setFolders(
       folders.map((folder) =>

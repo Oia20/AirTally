@@ -1,9 +1,9 @@
-// types.ts
-export interface CounterProps {
+  // types.ts
+  export interface CounterProps {
     id: string;
     name: string;
     incrementBy: number;
-    initialValue?: number;
+    initialValue: number;
     onDelete: (id: string) => void;
   }
   

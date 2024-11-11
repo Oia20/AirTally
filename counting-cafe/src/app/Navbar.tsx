@@ -1,8 +1,11 @@
-interface NavbarProps {
-  onNewFolder: () => void;
-}
+"use client";
 
-const Navbar = ({ onNewFolder }: NavbarProps) => {
+import { useContext } from "react";
+import { FolderContext } from "./folderContext";
+
+const Navbar = () => {
+  const { setIsAddingFolder } = useContext(FolderContext);
+
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -12,7 +15,7 @@ const Navbar = ({ onNewFolder }: NavbarProps) => {
           </div>
           <div className="flex items-center">
             <button 
-              onClick={onNewFolder}
+              onClick={() => setIsAddingFolder(true)}
               className="ml-4 px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all"
             >
               New Folder
