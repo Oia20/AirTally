@@ -14,14 +14,15 @@ const Folders = () => {
   const [newFolderTitle, setNewFolderTitle] = useState("");
 
   useEffect(() => {
+    const fetchFolders = async () => {
+      const response = await fetch('/api/folders');
+      const data = await response.json();
+      setFolders(data.map(mapDatabaseFolder));
+    };
     fetchFolders();
   }, []);
 
-  const fetchFolders = async () => {
-    const response = await fetch('/api/folders');
-    const data = await response.json();
-    setFolders(data.map(mapDatabaseFolder));
-  };
+
 
   const mapDatabaseFolder = (dbFolder: any): FolderProps => ({
     id: dbFolder.id.toString(),
