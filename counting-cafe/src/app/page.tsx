@@ -1,6 +1,7 @@
 import Folders from "./folders";
 import Navbar from "./Navbar";
 import { FolderProvider } from "./folderContext";
+import { ClerkProvider } from "@clerk/nextjs";
 
 interface User {
   id: string;
@@ -15,17 +16,19 @@ export default async function Home() {
   const users: User[] = await response.json();
   
   return (
-    <>
-      {users.map((user) => (
-        <div key={user.id}>
-          <h2>{user.name}</h2>
-          <p>{user.email}</p>
-        </div>
-      ))}
-      <FolderProvider>
-        <Navbar />
-        <Folders />
-      </FolderProvider>
-    </>
+    <ClerkProvider>
+      <>
+        {users.map((user) => (
+          <div key={user.id}>
+            <h2>{user.name}</h2>
+            <p>{user.email}</p>
+          </div>
+        ))}
+        <FolderProvider>
+          <Navbar />
+          <Folders />
+        </FolderProvider>
+      </>
+    </ClerkProvider>
   );
 }
