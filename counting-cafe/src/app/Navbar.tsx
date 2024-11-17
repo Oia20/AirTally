@@ -2,13 +2,7 @@
 
 import { useContext } from "react";
 import { FolderContext } from "./folderContext";
-import { 
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignOutButton,
-  UserButton
-} from "@clerk/nextjs";
+
 
 const Navbar = () => {
   const { setIsAddingFolder } = useContext(FolderContext);
@@ -22,10 +16,6 @@ const Navbar = () => {
           </div>
           <div className="flex items-center">
 
-            <SignedOut>
-              <SignInButton></SignInButton>
-            </SignedOut>
-            <SignedIn>
 
               <button 
                 onClick={() => setIsAddingFolder(true)}
@@ -34,11 +24,7 @@ const Navbar = () => {
                 New Folder
               </button>
               <div className="ml-4">
-                <SignOutButton>
-                  <UserButton />
-                </SignOutButton>
               </div>
-            </SignedIn>
             
           </div>
         </div>
