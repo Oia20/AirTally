@@ -2,11 +2,12 @@
 
 import { useContext } from "react";
 import { FolderContext } from "./folderContext";
-
+import { useAuth } from "./authContext";
+import Link from "next/link";
 
 const Navbar = () => {
   const { setIsAddingFolder } = useContext(FolderContext);
-
+  const { isAuthenticated, logout} = useAuth();
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,8 +25,12 @@ const Navbar = () => {
                 New Folder
               </button>
               <div className="ml-4">
+                {isAuthenticated ? (
+                  <button onClick={logout} className="text-blue-500 hover:text-blue-600">Logout</button>
+                ) : (
+                  <Link href="/login" className="text-blue-500 hover:text-blue-600">Login</Link>
+                )}
               </div>
-            
           </div>
         </div>
       </div>

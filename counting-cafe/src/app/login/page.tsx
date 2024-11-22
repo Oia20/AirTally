@@ -1,6 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useAuth } from '../authContext';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -8,7 +9,8 @@ export default function Home() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  
+  const { login } = useAuth();
+
   async function signIn(email: string, password: string) {
     const response = await fetch("/api/auth/login", {
       method: "POST",
@@ -41,6 +43,7 @@ export default function Home() {
     try {
       const data = await signIn(email, password);
       localStorage.setItem('token', data.token);
+      login(data.token);
       router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
