@@ -1,5 +1,3 @@
-// Erroring in this file when signing up, something to do with the prisma I suspect.
-
 
 import bcrypt from "bcrypt";
 import { prisma } from "../../../lib/prisma/prisma";
