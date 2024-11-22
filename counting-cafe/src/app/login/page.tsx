@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow">
-        <h1 className="text-3xl font-bold text-center">Sign Up</h1>
+        <h1 className="text-3xl font-bold text-center">Sign Into AirTally</h1>
         {error && <p className="text-red-500 text-center">{error}</p>}
         
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
