@@ -1,5 +1,6 @@
 'use client';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import jwt from 'jsonwebtoken';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -18,22 +19,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check localStorage for token on initial load
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem('AT_JWT');
     if (storedToken) {
-      setToken(storedToken);
-      setIsAuthenticated(true);
+      const decoded = jwt.decode(storedToken);
+      if (
+        decoded && 
+        typeof decoded === 'object' && 
+        'userId' in decoded && 
+        'exp' in decoded && 
+        decoded.exp! * 1000 > Date.now()
+      ) {
+        setUserId(decoded.userId);
+        setToken(storedToken);
+        setIsAuthenticated(true);
+      } else {
+        localStorage.removeItem('AT_JWT');
+      }
     }
   }, []);
 
   const login = (newToken: string) => {
-    localStorage.setItem('token', newToken);
-    setToken(newToken);
-    setIsAuthenticated(true);
+    const decoded = jwt.decode(newToken) as { userId: string; exp?: number };
+    
+    if (decoded && decoded.exp && decoded.exp * 1000 > Date.now()) {
+      localStorage.setItem('AT_JWT', newToken);
+      setUserId(decoded.userId);
+      setToken(newToken);
+      setIsAuthenticated(true);
+    } else {
+      throw new Error('Invalid or expired token');
+    }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('AT_JWT');
     setToken(null);
     setIsAuthenticated(false);
   };

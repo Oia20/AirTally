@@ -15,8 +15,14 @@ export default function middleware(req: NextRequest) {
   }
 
   try {
-    jwt.verify(token, process.env.JWT_SECRET);
-    return NextResponse.next();
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string };
+    // Add userId to request headers
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('X-User-Id', decoded.userId);
+
+    return NextResponse.next({
+      headers: requestHeaders,
+    });
   } catch (error) {
     return new NextResponse("Invalid or expired token", { status: 403 });
   }
