@@ -22,6 +22,6 @@ export async function POST(req: Request) {
     throw new Error('JWT_SECRET is not defined');
   }
 
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5m" });
   return new Response(JSON.stringify({ token, id: user.id }), { status: 200 });
 }
