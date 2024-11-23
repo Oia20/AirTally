@@ -9,7 +9,7 @@ export default function Home() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, setUserId } = useAuth();
 
   async function signIn(email: string, password: string) {
     const response = await fetch("/api/auth/login", {
@@ -44,6 +44,7 @@ export default function Home() {
       const data = await signIn(email, password);
       localStorage.setItem('token', data.token);
       login(data.token);
+      setUserId(data.id);
       router.push('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');

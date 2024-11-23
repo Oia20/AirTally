@@ -7,13 +7,14 @@ import Link from "next/link";
 
 const Navbar = () => {
   const { setIsAddingFolder } = useContext(FolderContext);
-  const { isAuthenticated, logout} = useAuth();
+  const { isAuthenticated, logout, userId } = useAuth();
   return (
     <nav className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
             <span className="text-xl font-bold text-blue-600">Counting Café</span>
+            {userId && <span className="text-sm text-gray-500 ml-2">User ID: {userId}</span>}
           </div>
           <div className="flex items-center">
 
