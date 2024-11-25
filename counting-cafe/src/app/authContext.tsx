@@ -7,7 +7,7 @@ interface AuthContextType {
   token: string | null;
   userId: string | null;
   setUserId: (userId: string | null) => void;
-  login: (token: string) => void;
+  login: (token: string, refreshToken: string) => void;
   logout: () => void;
 }
 
@@ -17,6 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('AT_JWT');
@@ -38,13 +39,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = (newToken: string) => {
+  const refreshAccessToken = async () => {
+    if (!refreshToken) return;
+
+    try {
+      const response = await fetch('/api/auth/refresh', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken }),
+      });
+
+      if (response.ok) {
+        const { accessToken } = await response.json();
+        setToken(accessToken);
+      } else {
+        logout();
+      }
+    } catch (error) {
+      logout();
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      const decoded = jwt.decode(token) as { exp?: number };
+      if (decoded.exp) {
+        const timeUntilExpiry = decoded.exp * 1000 - Date.now();
+        const refreshTime = timeUntilExpiry - 60000;
+
+        const refreshTimer = setTimeout(refreshAccessToken, refreshTime);
+        return () => clearTimeout(refreshTimer);
+      }
+    }
+  }, [token]);
+
+  const login = (newToken: string, newRefreshToken: string) => {
     const decoded = jwt.decode(newToken) as { userId: string; exp?: number };
     
     if (decoded && decoded.exp && decoded.exp * 1000 > Date.now()) {
       localStorage.setItem('AT_JWT', newToken);
+      localStorage.setItem('RT_JWT', newRefreshToken);
       setUserId(decoded.userId);
       setToken(newToken);
+      setRefreshToken(newRefreshToken);
       setIsAuthenticated(true);
     } else {
       throw new Error('Invalid or expired token');
@@ -53,6 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem('AT_JWT');
+    localStorage.removeItem('RT_JWT');
+    setRefreshToken(null);
     setToken(null);
     setIsAuthenticated(false);
   };

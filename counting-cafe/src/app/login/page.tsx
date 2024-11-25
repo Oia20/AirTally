@@ -31,6 +31,7 @@ export default function Home() {
       throw new Error(data?.error || 'Something went wrong');
     }
   
+    console.log('Login response:', data);
     return data;
   }
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,9 +43,16 @@ export default function Home() {
 
     try {
       const data = await signIn(email, password);
-      login(data.token);
+      console.log('Login data:', data);
+      
+      if (!data.token) {
+        throw new Error('No token received from server');
+      }
+      
+      login(data.token, data.refreshToken);
       router.push('/');
     } catch (err) {
+      console.error('Login error:', err);
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
       setLoading(false);

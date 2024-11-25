@@ -22,6 +22,30 @@ export async function POST(req: Request) {
     throw new Error('JWT_SECRET is not defined');
   }
 
-  const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "5m" });
-  return new Response(JSON.stringify({ token, id: user.id }), { status: 200 });
+  const token = jwt.sign(
+    { userId: user.id }, 
+    process.env.JWT_SECRET!,
+    { expiresIn: "15m" }
+  );
+
+  const refreshToken = jwt.sign(
+    { userId: user.id }, 
+    process.env.REFRESH_TOKEN_SECRET!, 
+    { expiresIn: "7d" }
+  );
+
+  // Store refresh token in database
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { refreshToken: refreshToken },
+  });
+
+  return new Response(
+    JSON.stringify({ 
+      token, 
+      refreshToken,
+      id: user.id 
+    }), 
+    { status: 200 }
+  );
 }
