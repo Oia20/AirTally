@@ -9,7 +9,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   const [isAddingCounter, setIsAddingCounter] = useState(false);
   const [newCounterName, setNewCounterName] = useState("");
 
-  const handleAddCounter = () => {
+  const handleAddFolder = () => {
     if (newCounterName.trim()) {
       onAddCounter(id, {
         id: uuidv4(),
@@ -72,7 +72,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                 autoFocus
               />
               <button
-                onClick={handleAddCounter}
+                onClick={handleAddFolder}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
               >
                 Add

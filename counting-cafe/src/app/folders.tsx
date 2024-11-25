@@ -7,6 +7,7 @@ import { CounterProps, FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 import { useContext } from "react";
 import { FolderContext } from "./folderContext";
+import { useAuth } from "./authContext";
 
 const initialFolders: FolderProps[] = [
   {
@@ -19,7 +20,7 @@ const initialFolders: FolderProps[] = [
           throw new Error("Function not implemented.");
         }
       }
-    ] // Initialize counters as an empty array if there are no initial counters
+    ]
     ,
     onDelete: function (): void {
       throw new Error("Function not implemented.");
@@ -33,14 +34,13 @@ const initialFolders: FolderProps[] = [
 }
 ];
 
-// Modify the component definition to accept props
 const Folders = () => {
+  const { isAuthenticated, userId } = useAuth();
   const { isAddingFolder, setIsAddingFolder } = useContext(FolderContext);
   const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
   const [newFolderTitle, setNewFolderTitle] = useState("");
 
-  // Rest of the code remains the same...
-  const addFolder = () => {
+  const addFolder = async () => {
     if (newFolderTitle.trim()) {
       setFolders([
         ...folders,
@@ -61,6 +61,12 @@ const Folders = () => {
       ]);
       setNewFolderTitle("");
       setIsAddingFolder(false);
+      if (isAuthenticated) {
+        await fetch("/api/folders/addFolder", {
+          method: "POST",
+          body: JSON.stringify({ title: newFolderTitle, userId: userId }),
+        });
+      }
     }
   };
 
