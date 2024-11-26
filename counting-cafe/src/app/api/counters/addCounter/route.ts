@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     return NextResponse.json(counter);
   } catch (error) {
     return NextResponse.json(
-      { error: "Failed to create counter" },
+      { error: `Invalid refresh token: ${error}` },
       { status: 500 }
     );
   }

@@ -24,7 +24,7 @@ export default function middleware(req: NextRequest) {
       headers: requestHeaders,
     });
   } catch (error) {
-    return new NextResponse("Invalid or expired token", { status: 403 });
+    return new NextResponse(`Invalid or expired token: ${error}`, { status: 403 });
   }
 }
 

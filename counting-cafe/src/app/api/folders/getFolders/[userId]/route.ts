@@ -6,7 +6,6 @@ export async function GET(
 ) {
   const params = await context.params;
   const userId = params.userId;
-  console.log(userId);
   if (!userId) return new Response('User ID is required', { status: 400 });
 
   const folders = await prisma.folder.findMany({

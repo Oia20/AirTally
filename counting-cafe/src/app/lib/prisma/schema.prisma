@@ -41,7 +41,6 @@ model Folder {
   counters  Counters[]
   user      User     @relation(fields: [userId], references: [id])
   userId    String
-
   Timers Timers[]
 }
 

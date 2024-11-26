@@ -24,7 +24,7 @@ export default function Home() {
     try {
       data = await response.json();
     } catch (e) {
-      throw new Error('Invalid server response');
+      throw new Error(`Invalid server response: ${e}`);
     }
   
     if (!response.ok) {

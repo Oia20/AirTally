@@ -56,6 +56,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout();
       }
     } catch (error) {
+      console.error(`Error refreshing access token: ${error}`);
       logout();
     }
   };

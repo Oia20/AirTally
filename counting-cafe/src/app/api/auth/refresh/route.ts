@@ -32,6 +32,6 @@ export async function POST(req: Request) {
 
     return new Response(JSON.stringify({ accessToken }), { status: 200 });
   } catch (error) {
-    return new Response("Invalid refresh token", { status: 403 });
+    return new Response(`Invalid refresh token: ${error}`, { status: 403 });
   }
 }
