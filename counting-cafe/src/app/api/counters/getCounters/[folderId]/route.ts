@@ -1,18 +1,12 @@
 import { prisma } from "../../../../lib/prisma/prisma";
-import { NextRequest } from "next/server";
-
-type Props = {
-  params: {
-    folderId: string
-  }
-}
 
 export async function GET(
-  request: NextRequest,
-  { params }: Props
+  req: Request,
+  context : { params: { folderId: string } }
 ) {
+  const params = await context.params;
   const folderId = params.folderId;
-
+  
   if (!folderId) return new Response('Folder ID is required', { status: 400 });
 
   const counters = await prisma.counters.findMany({
