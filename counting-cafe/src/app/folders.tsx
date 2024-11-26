@@ -73,7 +73,7 @@ const Folders = () => {
 
       setFolders(foldersWithCounters);
     }
-  }, []);
+  }, [isAuthenticated, userId]);
 
   const addFolder = async () => {
     if (newFolderTitle.trim()) {

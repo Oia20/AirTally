@@ -1,11 +1,14 @@
 import { prisma } from "../../../../lib/prisma/prisma";
+import { NextRequest } from "next/server";
 
 export async function GET(
-  req: Request,
-  context: { params: { folderId: string } }
+  req: NextRequest,
+  { params }: { params: { folderId: string } }
 ) {
-  const params = await context.params;
-  const folderId = params.folderId;
+  const parameters = await params;
+  const folderId = parameters.folderId;
+
+
 
   if (!folderId) return new Response('Folder ID is required', { status: 400 });
 
