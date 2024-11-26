@@ -2,10 +2,10 @@ import { prisma } from "../../../../lib/prisma/prisma";
 import { NextRequest } from "next/server";
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { folderId: string } }
+  request: NextRequest,
+  context: { params: { folderId: string } }
 ) {
-  const parameters = await params;
+  const parameters = await context.params;
   const folderId = parameters.folderId;
 
 
