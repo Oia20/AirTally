@@ -1,7 +1,7 @@
 // folders.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Folder from "./Folder";
 import { CounterProps, FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
@@ -40,6 +40,41 @@ const Folders = () => {
   const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
   const [newFolderTitle, setNewFolderTitle] = useState("");
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchFolders();
+    }
+
+    async function fetchFolders() {
+      const response = await fetch(`/api/folders/getFolders/${userId}`);
+      const foldersData = await response.json();
+      
+      // Fetch counters for each folder
+      const foldersWithCounters = await Promise.all(
+        foldersData.map(async (folder: FolderProps) => {
+          const countersResponse = await fetch(`/api/counters/getCounters/${folder.id}`);
+          const countersData = await countersResponse.json();
+          
+          // Map the counter data to include the onDelete function
+          const countersWithDelete = countersData.map((counter: CounterProps) => ({
+            ...counter,
+            onDelete: () => {} // Initialize with empty function
+          }));
+
+          return {
+            ...folder,
+            counters: countersWithDelete,
+            onDelete: () => {},
+            onAddCounter: () => {},
+            onDeleteCounter: () => {}
+          };
+        })
+      );
+
+      setFolders(foldersWithCounters);
+    }
+  }, [isAuthenticated]);
+
   const addFolder = async () => {
     if (newFolderTitle.trim()) {
       setFolders([
@@ -70,11 +105,17 @@ const Folders = () => {
     }
   };
 
-  const deleteFolder = (folderId: string) => {
+  const deleteFolder = async (folderId: string) => {
     setFolders(folders.filter((folder) => folder.id !== folderId));
+    if (isAuthenticated) {
+      await fetch("/api/folders/deleteFolder", {
+        method: "DELETE",
+        body: JSON.stringify({ folderId: folderId, userId: userId }),
+      });
+    }
   };
 
-  const addCounter = (folderId: string, counter: Omit<CounterProps, 'onDelete'>) => {
+  const addCounter = async (folderId: string, counter: Omit<CounterProps, 'onDelete'>) => {
     setFolders(
       folders.map((folder) =>
         folder.id === folderId
@@ -82,6 +123,12 @@ const Folders = () => {
           : folder
       )
     );
+    if (isAuthenticated) {
+      await fetch("/api/counters/addCounter", {
+        method: "POST",
+        body: JSON.stringify({ folderId: folderId, name: counter.name, increment: counter.incrementBy, initial: counter.initialValue }),
+      });
+    }
   };
 
   const deleteCounter = (folderId: string, counterId: string) => {

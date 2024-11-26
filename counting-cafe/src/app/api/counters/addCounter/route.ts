@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const { folderId, name, increment, initial, userId } = await req.json();
+    const { folderId, name, increment, initial } = await req.json();
 
     const counter = await prisma.counters.create({
       data: {
