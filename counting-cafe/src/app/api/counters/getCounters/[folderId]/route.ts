@@ -1,9 +1,15 @@
 import { prisma } from "../../../../lib/prisma/prisma";
 import { NextRequest } from "next/server";
 
+type Props = {
+  params: {
+    folderId: string
+  }
+}
+
 export async function GET(
   request: NextRequest,
-  { params }: { params: { folderId: string } }
+  { params }: Props
 ) {
   const folderId = params.folderId;
 
