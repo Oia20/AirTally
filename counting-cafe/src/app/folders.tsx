@@ -39,6 +39,7 @@ const Folders = () => {
   const { isAddingFolder, setIsAddingFolder } = useContext(FolderContext);
   const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
   const [newFolderTitle, setNewFolderTitle] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -72,6 +73,7 @@ const Folders = () => {
       );
 
       setFolders(foldersWithCounters);
+      setIsLoading(false);
     }
   }, [isAuthenticated, userId]);
 
@@ -179,6 +181,11 @@ const Folders = () => {
             </div>
           )}
 
+          {isLoading ? (
+            <div className="text-center mt-12">
+              <p className="text-gray-500">Loading your glorious counters...</p>
+            </div>
+          ) : (
           <div className="space-y-6">
             {folders.map((folder) => (
               <Folder
@@ -188,8 +195,9 @@ const Folders = () => {
                 onAddCounter={addCounter}
                 onDeleteCounter={deleteCounter}
               />
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
