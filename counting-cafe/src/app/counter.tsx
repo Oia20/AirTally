@@ -8,8 +8,9 @@ const Counter = ({ id, name, incrementBy = 1, initialValue = 0, onDelete }: Coun
   const [count, setCount] = useState<number>(initialValue);
   const [step, setStep] = useState<number>(incrementBy);
 
-  const increment = useCallback(() => setCount(prev => prev + step), [step]);
-  const decrement = useCallback(() => setCount(prev => prev - step), [step]);
+  // Here, adding the api fetch to increment and decrement the counter.... ------------------
+  const increment = useCallback(() => setCount(prev => prev + step || 1), [step]);
+  const decrement = useCallback(() => setCount(prev => prev - step || 1), [step]);
   const reset = useCallback(() => setCount(initialValue), [initialValue]);
 
   return (

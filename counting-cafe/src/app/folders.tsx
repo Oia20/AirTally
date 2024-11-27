@@ -75,6 +75,8 @@ const Folders = () => {
       setFolders(foldersWithCounters);
       setIsLoading(false);
     }
+    setIsLoading(false);
+
   }, [isAuthenticated, userId]);
 
   const addFolder = async () => {
