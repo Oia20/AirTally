@@ -49,6 +49,7 @@ model Counters {
   name      String
   increment Int
   initial   Int
+  count     Int      @default(0)
   folder    Folder   @relation(fields: [folderId], references: [id])
   folderId  Int
 }

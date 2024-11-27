@@ -110,6 +110,8 @@ const Folders = () => {
   const deleteFolder = async (folderId: string) => {
     setFolders(folders.filter((folder) => folder.id !== folderId));
     if (isAuthenticated) {
+      console.log("Deleting folder:", folderId);
+      console.log("User ID:", userId);
       await fetch("/api/folders/deleteFolder", {
         method: "DELETE",
         body: JSON.stringify({ folderId: folderId, userId: userId }),
