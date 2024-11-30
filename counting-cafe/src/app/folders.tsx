@@ -15,7 +15,7 @@ const initialFolders: FolderProps[] = [
     title: "Welcome!",
     counters: [
       {
-        id: uuidv4(), name: "Welcome to Counting Café", incrementBy: 1, initialValue: 0,
+        id: uuidv4(), name: "Welcome to Counting Café", incrementBy: 1, count: 0, initialValue: 0,
         onDelete: function (): void {
           throw new Error("Function not implemented.");
         }

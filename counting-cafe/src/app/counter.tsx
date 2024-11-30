@@ -5,7 +5,7 @@ import { useState, useCallback, useEffect } from "react";
 import { CounterProps } from "./types";
 import { useAuth } from "./authContext";
 
-const Counter = ({ id, name, incrementBy = 1, initialValue = 0, onDelete }: CounterProps) => {
+const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterProps) => {
   const [count, setCount] = useState<number>(initialValue);
   const [step, setStep] = useState<number>(incrementBy);
   const { isAuthenticated } = useAuth();
@@ -37,9 +37,6 @@ const Counter = ({ id, name, incrementBy = 1, initialValue = 0, onDelete }: Coun
   }, [step]);
 
 
-  // Successfully fetching the counter from the database, getting an error just before retrieving the counter.
-
-
   const decrement = useCallback(() => setCount(prev => prev - step), [step]);
   const reset = useCallback(() => setCount(initialValue), [initialValue]);
 
@@ -67,7 +64,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue = 0, onDelete }: Coun
         >
           <span className="text-xl">−</span>
         </button>
-        <div className="text-3xl font-semibold text-gray-900">{initialValue}</div>
+        <div className="text-3xl font-semibold text-gray-900">{count}</div>
         <button
           onClick={() => increment(id)}
           className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20"

@@ -3,6 +3,7 @@
     id: string;
     name: string;
     incrementBy: number;
+    count: number;
     initialValue: number;
     onDelete: (id: string) => void;
   }

@@ -15,6 +15,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
         id: uuidv4(),
         name: newCounterName,
         incrementBy: 1,
+        count: 0,
         initialValue: 0,
       });
       setNewCounterName("");
@@ -90,6 +91,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
               <Counter
                 key={counter.id}
                 {...counter}
+                initialValue={counter.count}
                 onDelete={() => onDeleteCounter(id, counter.id)}
               />
             ))}
