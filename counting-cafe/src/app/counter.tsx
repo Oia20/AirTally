@@ -3,10 +3,12 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { CounterProps } from "./types";
+import { useAuth } from "./authContext";
 
 const Counter = ({ id, name, incrementBy = 1, initialValue = 0, onDelete }: CounterProps) => {
   const [count, setCount] = useState<number>(initialValue);
   const [step, setStep] = useState<number>(incrementBy);
+  const { isAuthenticated } = useAuth();
 
   const incrementCounter = async (id: string) => {
     const response = await fetch('/api/counters/incrementCounter', {
@@ -36,39 +38,11 @@ const Counter = ({ id, name, incrementBy = 1, initialValue = 0, onDelete }: Coun
 
 
   // Successfully fetching the counter from the database, getting an error just before retrieving the counter.
-  const getCounter = async (id: string) => {
-    const response = await fetch(`/api/counters/getCounter?id=${id}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
 
-    if (!response.ok) {
-      throw new Error('Failed to get counter');
-    }
-
-    const counter = await response.json();
-    return counter;
-  }
 
   const decrement = useCallback(() => setCount(prev => prev - step), [step]);
   const reset = useCallback(() => setCount(initialValue), [initialValue]);
 
-  useEffect(() => {
-    if (id) {
-      const fetchCounter = async () => {
-        try {
-          const counter = await getCounter(id);
-          setCount(counter.count);
-        } catch (error) {
-          console.error('Failed to fetch counter:', error);
-        }
-      };
-
-      fetchCounter();
-    }
-  }, [id]); // Run when id changes
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm w-full transition-all hover:shadow-md border border-gray-100">
@@ -93,7 +67,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue = 0, onDelete }: Coun
         >
           <span className="text-xl">−</span>
         </button>
-        <div className="text-3xl font-semibold text-gray-900">{count}</div>
+        <div className="text-3xl font-semibold text-gray-900">{initialValue}</div>
         <button
           onClick={() => increment(id)}
           className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20"

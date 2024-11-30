@@ -4,6 +4,10 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const id = url.searchParams.get("id");
 
+  if (!id) {
+    return new Response(JSON.stringify({ error: 'ID is required' }), { status: 400 });
+  }
+
   console.log("Received ID:", id);
 
   const isNumericId = !isNaN(Number(id));
