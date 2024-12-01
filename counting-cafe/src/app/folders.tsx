@@ -15,7 +15,13 @@ const initialFolders: FolderProps[] = [
     title: "Welcome!",
     counters: [
       {
-        id: uuidv4(), name: "Welcome to Counting Café", incrementBy: 1, count: 0, initialValue: 0,
+        id: uuidv4(), name: "Welcome to AirTally", incrementBy: 1, count: 0, initialValue: 0,
+        onDelete: function (): void {
+          throw new Error("Function not implemented.");
+        }
+      },
+      {
+        id: uuidv4(), name: "Sign in to persist your counters", incrementBy: 12, count: 55, initialValue: 0,
         onDelete: function (): void {
           throw new Error("Function not implemented.");
         }
@@ -44,8 +50,10 @@ const Folders = () => {
   useEffect(() => {
     if (isAuthenticated) {
       fetchFolders();
+    } else {
+      setFolders(initialFolders);
+      setIsLoading(false);
     }
-
     async function fetchFolders() {
       const response = await fetch(`/api/folders/getFolders/${userId}`);
       const foldersData = await response.json();
@@ -75,8 +83,6 @@ const Folders = () => {
       setFolders(foldersWithCounters);
       setIsLoading(false);
     }
-    setIsLoading(false);
-
   }, [isAuthenticated, userId]);
 
   const addFolder = async () => {
@@ -156,7 +162,7 @@ const Folders = () => {
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-4xl mx-auto">
           <header className="text-center mb-12">
-            <h1 className="text-3xl font-semibold text-gray-900 mb-3">Counting Café</h1>
+            <h1 className="text-3xl font-semibold text-gray-900 mb-3">AirTally</h1>
             <p className="text-gray-500">The web app for counting... Anything!</p>
           </header>
 

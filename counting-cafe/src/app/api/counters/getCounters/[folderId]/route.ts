@@ -13,7 +13,5 @@ export async function GET(
     where: { folderId: parseInt(folderId) },
   });
 
-  console.log(counters);
-
   return new Response(JSON.stringify(counters), { status: 200 });
 }
