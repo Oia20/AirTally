@@ -2,7 +2,8 @@ import { prisma } from "../../../lib/prisma/prisma";
 
 
 export async function POST(req: Request) {
-  const { id } = await req.json();
+  const { id, count } = await req.json();
+  console.log(id, count, "sassasasasasas");
   const counter = await prisma.counters.findUnique({
     where: { id: id },
   });
@@ -11,8 +12,9 @@ export async function POST(req: Request) {
 
   const updatedCounter = await prisma.counters.update({
     where: { id: id },
-    data: { count: counter.count + counter.increment },
+    data: { count: count },
   });
+  
 
   return new Response(JSON.stringify(updatedCounter), { status: 200 });
 }

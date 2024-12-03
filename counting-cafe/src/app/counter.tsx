@@ -1,7 +1,7 @@
 // counter.tsx
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { CounterProps } from "./types";
 import { useAuth } from "./authContext";
 
@@ -10,13 +10,27 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
   const [step, setStep] = useState<number>(incrementBy);
   const { isAuthenticated } = useAuth();
 
-  const incrementCounter = async (id: string) => {
-    const response = await fetch('/api/counters/incrementCounter', {
+
+
+  const deleteCounter = async (id: string) => {
+    onDelete(id);
+    const response = await fetch('/api/counters/deleteCounter', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ id }),
+    });
+  };
+
+  const incrementCounter = async (id: string, updatedCount: number) => {
+    console.log(id, updatedCount, step, "sassasasasasas");
+    const response = await fetch('/api/counters/incrementCounter', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id, count: updatedCount }),
     });
 
     if (!response.ok) {
@@ -28,16 +42,25 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
   };
 
   const increment = useCallback(async (id: string) => {
+    const newCount = count + step;
+    setCount(newCount);
     try {
-      const updatedCounter = await incrementCounter(id);
-      setCount(updatedCounter.count);
+      await incrementCounter(id, newCount);
     } catch (error) {
       console.error(error);
     }
-  }, [step]);
+  }, [count, step]);
 
+  const decrement = useCallback(async (id: string) => {
+    const newCount = count - step;
+    setCount(newCount);
+    try {
+      await incrementCounter(id, newCount);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [count, step]);
 
-  const decrement = useCallback(() => setCount(prev => prev - step), [step]);
   const reset = useCallback(() => setCount(initialValue), [initialValue]);
 
 
@@ -46,7 +69,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium text-gray-900">{name}</h3>
         <button
-          onClick={() => onDelete(id)}
+          onClick={() => deleteCounter(id)}
           className="text-red-500 hover:text-red-700 transition-colors p-1"
           aria-label="Delete counter"
         >
@@ -58,7 +81,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
 
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <button
-          onClick={decrement}
+          onClick={() => decrement(id)}
           className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50"
           disabled={count <= 0}
         >

@@ -109,7 +109,7 @@ const Folders = () => {
       if (isAuthenticated) {
         await fetch("/api/folders/addFolder", {
           method: "POST",
-          body: JSON.stringify({ title: newFolderTitle, userId: userId }),
+          body: JSON.stringify({ title: newFolderTitle, userId: userId, id: uuidv4() }),
         });
       }
     }

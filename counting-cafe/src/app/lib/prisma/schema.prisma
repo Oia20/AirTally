@@ -30,13 +30,14 @@ model Timers {
   increment Int
   initial   Int
   folder   Folder   @relation(fields: [folderId], references: [id])
-  folderId  Int
+  folderId  String
 
   User User[]
 }
 
 model Folder {
-  id        Int      @id @default(autoincrement())
+  id            String    @id @default(uuid())
+
   title     String
   counters  Counters[]
   user      User     @relation(fields: [userId], references: [id])
@@ -51,5 +52,5 @@ model Counters {
   initial   Int
   count     Int      @default(0)
   folder    Folder   @relation(fields: [folderId], references: [id])
-  folderId  Int
+  folderId  String
 }
