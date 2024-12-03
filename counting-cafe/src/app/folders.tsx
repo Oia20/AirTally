@@ -87,29 +87,33 @@ const Folders = () => {
 
   const addFolder = async () => {
     if (newFolderTitle.trim()) {
-      setFolders([
-        ...folders,
-        {
-          id: uuidv4(),
-          title: newFolderTitle,
-          counters: [],
-          onDelete: function (): void {
-            throw new Error("Function not implemented.");
-          },
-          onAddCounter: function (): void {
-            throw new Error("Function not implemented.");
-          },
-          onDeleteCounter: function (): void {
-            throw new Error("Function not implemented.");
-          }
-        },
-      ]);
+
       setNewFolderTitle("");
       setIsAddingFolder(false);
       if (isAuthenticated) {
         await fetch("/api/folders/addFolder", {
           method: "POST",
-          body: JSON.stringify({ title: newFolderTitle, userId: userId, id: uuidv4() }),
+          body: JSON.stringify({ title: newFolderTitle, userId: userId }),
+        }).then((response) => {
+          response.json().then((data) => {
+            setFolders([
+              ...folders,
+              {
+                id: data.id,
+                title: newFolderTitle,
+                counters: [],
+                onDelete: function (): void {
+                  throw new Error("Function not implemented.");
+                },
+                onAddCounter: function (): void {
+                  throw new Error("Function not implemented.");
+                },
+                onDeleteCounter: function (): void {
+                  throw new Error("Function not implemented.");
+                }
+              },
+            ]);
+          });
         });
       }
     }

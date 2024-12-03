@@ -29,20 +29,18 @@ model Timers {
   name      String
   increment Int
   initial   Int
-  folder   Folder   @relation(fields: [folderId], references: [id])
+  folder    Folder   @relation(fields: [folderId], references: [id])
   folderId  String
-
-  User User[]
+  User      User[]
 }
 
 model Folder {
-  id            String    @id @default(uuid())
-
+  id        String    @id @default(uuid())
   title     String
   counters  Counters[]
   user      User     @relation(fields: [userId], references: [id])
   userId    String
-  Timers Timers[]
+  Timers    Timers[]
 }
 
 model Counters {

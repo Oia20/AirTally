@@ -10,7 +10,7 @@ export async function GET(
   if (!folderId) return new Response('Folder ID is required', { status: 400 });
 
   const counters = await prisma.counters.findMany({
-    where: { folderId: parseInt(folderId) },
+    where: { folderId: folderId },
   });
 
   return new Response(JSON.stringify(counters), { status: 200 });
