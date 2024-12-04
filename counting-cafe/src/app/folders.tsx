@@ -8,6 +8,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useContext } from "react";
 import { FolderContext } from "./folderContext";
 import { useAuth } from "./authContext";
+import Box from '@mui/material/Box';
+import LinearProgress from '@mui/material/LinearProgress';
 
 const initialFolders: FolderProps[] = [
   {
@@ -46,6 +48,7 @@ const Folders = () => {
   const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
   const [newFolderTitle, setNewFolderTitle] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showFolderLoading, setShowFolderLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -87,7 +90,7 @@ const Folders = () => {
 
   const addFolder = async () => {
     if (newFolderTitle.trim()) {
-
+      setShowFolderLoading(true);
       setNewFolderTitle("");
       setIsAddingFolder(false);
       if (isAuthenticated) {
@@ -113,6 +116,7 @@ const Folders = () => {
                 }
               },
             ]);
+            setShowFolderLoading(false);
           });
         });
       }
@@ -202,7 +206,10 @@ const Folders = () => {
 
           {isLoading ? (
             <div className="text-center mt-12">
-              <p className="text-gray-500">Loading your glorious counters...</p>
+              <p className="text-gray-500 mb-2">Loading your glorious counters...</p>
+              <Box sx={{ width: '100%' }}>
+                <LinearProgress sx={{ height: 5, borderRadius: 5 }} color="info"/>
+              </Box>
             </div>
           ) : (
           <div className="space-y-6">
@@ -215,6 +222,13 @@ const Folders = () => {
                 onDeleteCounter={deleteCounter}
               />
               ))}
+              {showFolderLoading && (
+                <div className="text-center mt-12">
+                  <Box sx={{ width: '100%' }}>
+                    <LinearProgress sx={{ height: 5, borderRadius: 5 }} color="info"/>
+                  </Box>
+                </div>
+              )}
             </div>
           )}
         </div>

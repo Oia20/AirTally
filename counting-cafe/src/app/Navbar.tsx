@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { FolderContext } from "./folderContext";
 import { useAuth } from "./authContext";
 import Link from "next/link";
+import { Button } from "@mui/material";
 
 const Navbar = () => {
   const { setIsAddingFolder } = useContext(FolderContext);
@@ -17,19 +18,20 @@ const Navbar = () => {
             {isAuthenticated && userId && <span className="text-sm text-gray-500 ml-2">User ID: {userId}</span>}
           </div>
           <div className="flex items-center">
-
-
-              <button 
+              <Button 
                 onClick={() => setIsAddingFolder(true)}
-                className="ml-4 px-4 py-2 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all"
+                variant="contained"
+                color="primary"
               >
                 New Folder
-              </button>
+              </Button>
               <div className="ml-4">
                 {isAuthenticated ? (
-                  <button onClick={logout} className="text-blue-500 hover:text-blue-600">Logout</button>
+                  <Button onClick={logout} className="text-blue-500 hover:text-blue-600">Logout</Button>
                 ) : (
-                  <Link href="/login" className="text-blue-500 hover:text-blue-600">Login</Link>
+                  <Button variant="outlined" color="primary">
+                    <Link href="/login" className="text-blue-500 hover:text-blue-600">Login</Link>
+                  </Button>
                 )}
               </div>
           </div>
