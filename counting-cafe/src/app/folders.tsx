@@ -132,17 +132,22 @@ const Folders = () => {
   };
 
   const addCounter = async (folderId: string, counter: Omit<CounterProps, 'onDelete'>) => {
-    setFolders(
-      folders.map((folder) =>
-        folder.id === folderId
-          ? { ...folder, counters: [...folder.counters, { ...counter, onDelete: () => {} } as CounterProps] }
-          : folder
-      )
-    );
+    
     if (isAuthenticated) {
       await fetch("/api/counters/addCounter", {
         method: "POST",
         body: JSON.stringify({ folderId: folderId, name: counter.name, increment: counter.incrementBy, initial: counter.initialValue }),
+      }).then((response) => {
+        response.json().then((data) => {
+          console.log(data);
+          setFolders(
+            folders.map((folder) =>
+              folder.id === folderId
+                ? { ...folder, counters: [...folder.counters, { ...counter, id: data.id, onDelete: () => {} } as CounterProps] }
+                : folder
+            )
+          );
+        });
       });
     }
   };
