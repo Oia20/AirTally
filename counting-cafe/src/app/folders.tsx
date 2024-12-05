@@ -119,6 +119,12 @@ const Folders = () => {
             setShowFolderLoading(false);
           });
         });
+      } else {
+        setFolders([
+          ...folders,
+          { id: uuidv4(), title: newFolderTitle, counters: [], onDelete: () => {}, onAddCounter: () => {}, onDeleteCounter: () => {} }
+        ]);
+        setShowFolderLoading(false);
       }
     }
   };
@@ -153,6 +159,14 @@ const Folders = () => {
           );
         });
       });
+    } else {
+      setFolders(
+        folders.map((folder) =>
+          folder.id === folderId
+            ? { ...folder, counters: [...folder.counters, { ...counter, id: uuidv4(), onDelete: () => {} } as CounterProps] }
+            : folder
+        )
+      );
     }
   };
 
