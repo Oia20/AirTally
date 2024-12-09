@@ -5,7 +5,7 @@ import { useState, useCallback } from "react";
 import { CounterProps } from "./types";
 import { useAuth } from "./authContext";
 import { Button } from "@mui/material";
-
+import CounterMenu from "./counterMenu";
 
 const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterProps) => {
   const [count, setCount] = useState<number>(initialValue);
@@ -13,7 +13,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
   const { isAuthenticated } = useAuth();
 
 
-
+  // Delete counter, implement into popup like this onClick={() => deleteCounter(id)}
   const deleteCounter = async (id: string) => {
     onDelete(id);
     if (isAuthenticated) {
@@ -76,15 +76,9 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
     <div className="bg-white p-6 rounded-xl shadow-sm w-full transition-all hover:shadow-md border border-gray-100">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-lg font-medium text-gray-900">{name}</h3>
-        <button
-          onClick={() => deleteCounter(id)}
-          className="text-red-500 hover:text-red-700 transition-colors p-1"
-          aria-label="Delete counter"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
-        </button>
+
+        {/* Delete counter, implement into popup like this onClick={() => deleteCounter(id)} */}
+        <CounterMenu id={id} onDelete={deleteCounter} />
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
