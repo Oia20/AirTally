@@ -55,7 +55,9 @@ const Folders = () => {
       fetchFolders();
     } else {
       setFolders(initialFolders);
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
     }
     async function fetchFolders() {
       const response = await fetch(`/api/folders/getFolders/${userId}`);
@@ -84,9 +86,8 @@ const Folders = () => {
       );
 
       setFolders(foldersWithCounters);
-      setIsLoading(false);
     }
-  }, [isAuthenticated, userId]);
+  }, [ isAuthenticated ]);
 
   const addFolder = async () => {
     if (newFolderTitle.trim()) {
@@ -227,15 +228,17 @@ const Folders = () => {
             </div>
           ) : (
           <div className="space-y-6">
-            {folders.map((folder) => (
-              <Folder
-                key={folder.id}
-                {...folder}
-                onDelete={deleteFolder}
-                onAddCounter={addCounter}
+            {!isLoading && (
+              folders.map((folder) => (
+                <Folder
+                  key={folder.id}
+                  {...folder}
+                  onDelete={deleteFolder}
+                  onAddCounter={addCounter}
                 onDeleteCounter={deleteCounter}
-              />
-              ))}
+                />
+              ))
+            )}
               {showFolderLoading && (
                 <div className="text-center mt-12">
                   <Box sx={{ width: '100%' }}>
