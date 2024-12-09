@@ -49,6 +49,7 @@ const Folders = () => {
   const [newFolderTitle, setNewFolderTitle] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showFolderLoading, setShowFolderLoading] = useState<boolean>(false);
+  const { setNewCounterLoading } = useContext(FolderContext);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -143,7 +144,7 @@ const Folders = () => {
   };
 
   const addCounter = async (folderId: string, counter: Omit<CounterProps, 'onDelete'>) => {
-    
+    setNewCounterLoading(true);
     if (isAuthenticated) {
       await fetch("/api/counters/addCounter", {
         method: "POST",
@@ -169,6 +170,7 @@ const Folders = () => {
         )
       );
     }
+    setNewCounterLoading(false);
   };
 
   const deleteCounter = (folderId: string, counterId: string) => {

@@ -1,14 +1,34 @@
 // folder.tsx
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Counter from "./counter";
 import { FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
+import { FolderContext } from "./folderContext";
+import { CircularProgress } from "@mui/material";
 
 const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }: FolderProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isAddingCounter, setIsAddingCounter] = useState(false);
   const [newCounterName, setNewCounterName] = useState("");
+  const { newCounterLoading } = useContext(FolderContext);
 
+  function GradientCircularProgress() {
+    return (
+      <>
+      {/* Adjust colors of counter loading animation here in future. */}
+        <svg width={0} height={0}>
+          <defs>
+            <linearGradient id="my_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#e01cd5" />
+              <stop offset="100%" stopColor="#1CB5E0" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <CircularProgress sx={{ 'svg circle': { stroke: 'url(#my_gradient)' } }} />
+      </>
+    );
+  }
+  
   const handleAddFolder = () => {
     if (newCounterName.trim()) {
       onAddCounter(id, {
@@ -19,7 +39,6 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
         initialValue: 0,
       });
       setNewCounterName("");
-      setIsAddingCounter(false);
     }
   };
 
@@ -95,6 +114,11 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                 onDelete={() => onDeleteCounter(id, counter.id)}
               />
             ))}
+            {newCounterLoading && (
+              <div className="flex justify-center items-center">
+                <GradientCircularProgress />
+              </div>
+            )}
           </div>
         </div>
       )}
