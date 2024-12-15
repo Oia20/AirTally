@@ -4,14 +4,17 @@
 import { useState, useCallback } from "react";
 import { CounterProps } from "./types";
 import { useAuth } from "./authContext";
-import { Button } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import CounterMenu from "./counterMenu";
 
 const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterProps) => {
   const [count, setCount] = useState<number>(initialValue);
   const [step, setStep] = useState<number>(incrementBy);
+  const [openResetDialog, setOpenResetDialog] = useState(false);
   const { isAuthenticated } = useAuth();
 
+  const handleOpenResetDialog = () => setOpenResetDialog(true);
+  const handleCloseResetDialog = () => setOpenResetDialog(false);
 
   // Delete counter, implement into popup like this onClick={() => deleteCounter(id)}
   const deleteCounter = async (id: string) => {
@@ -24,6 +27,22 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
         },
         body: JSON.stringify({ id }),
       });
+    }
+  };
+
+  const setCounterValue = async (id: string, value: number) => {
+    setCount(value);
+    if (isAuthenticated) {
+      const response = await fetch('/api/counters/incrementCounter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, count: value }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to set counter value');
+      }
     }
   };
 
@@ -69,7 +88,18 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
     }
   }, [count, step]);
 
-    const reset = useCallback(() => setCount(initialValue), [initialValue]);
+  const reset = async () => {
+    if (isAuthenticated) {
+      setCount(0);
+      const response = await fetch('/api/counters/resetCounter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id }),
+      });
+    }
+  };
 
 
   return (
@@ -78,7 +108,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
         <h3 className="text-lg font-medium text-gray-900">{name}</h3>
 
         {/* Delete counter, implement into popup like this onClick={() => deleteCounter(id)} */}
-        <CounterMenu id={id} onDelete={deleteCounter} />
+        <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} />
       </div>
 
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -100,7 +130,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
 
       <div className="mt-6 flex justify-between items-center text-sm">
         <button
-          onClick={reset}
+          onClick={handleOpenResetDialog}
           className="text-gray-500 hover:text-gray-700 transition-colors focus:outline-none"
         >
           Reset
@@ -116,6 +146,29 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
           />
         </div>
       </div>
+
+      <Dialog
+        open={openResetDialog}
+        onClose={handleCloseResetDialog}
+        aria-labelledby="reset-dialog-title"
+      >
+        <DialogTitle id="reset-dialog-title">Confirm Reset</DialogTitle>
+        <DialogContent>
+          Are you sure you want to reset the {name} counter?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseResetDialog}>Cancel</Button>
+          <Button 
+            onClick={() => {
+              reset();
+              handleCloseResetDialog();
+            }} 
+            color="error"
+          >
+            Reset
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

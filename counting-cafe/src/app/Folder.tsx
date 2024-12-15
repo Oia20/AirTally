@@ -4,13 +4,17 @@ import Counter from "./counter";
 import { FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 import { FolderContext } from "./folderContext";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
 
 const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }: FolderProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isAddingCounter, setIsAddingCounter] = useState(false);
   const [newCounterName, setNewCounterName] = useState("");
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { newCounterLoading } = useContext(FolderContext);
+
+  const handleOpenDeleteDialog = () => setOpenDeleteDialog(true);
+  const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
 
   function GradientCircularProgress() {
     return (
@@ -70,7 +74,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
           <button
             onClick={(e) => {
               e.stopPropagation();
-              onDelete(id);
+              handleOpenDeleteDialog();
             }}
             className="text-red-500 hover:text-red-700 transition-colors px-3 py-1 rounded-md hover:bg-red-50"
           >
@@ -122,6 +126,29 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
           </div>
         </div>
       )}
+
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        aria-labelledby="delete-dialog-title"
+      >
+        <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete the folder "{title}"? This action cannot be undone and all counters in this folder will be deleted.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
+          <Button 
+            onClick={() => {
+              onDelete(id);
+              handleCloseDeleteDialog();
+            }} 
+            color="error"
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
