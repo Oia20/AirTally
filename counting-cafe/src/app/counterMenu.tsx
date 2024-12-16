@@ -15,6 +15,7 @@ interface SetCounterValueModalProps {
 const SetCounterValueModal = ({ open, onClose, id, onSetValue }: SetCounterValueModalProps) => {
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const [deletingCounter, setDeletingCounter] = useState<boolean>(false);
 
   const handleSubmit = () => {
     const numValue = Number(value);
@@ -55,6 +56,28 @@ const SetCounterValueModal = ({ open, onClose, id, onSetValue }: SetCounterValue
   );
 };
 
+// Add new DeleteConfirmationModal component
+interface DeleteConfirmationModalProps {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+const DeleteConfirmationModal = ({ open, onClose, onConfirm }: DeleteConfirmationModalProps) => {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>Confirm Delete</DialogTitle>
+      <DialogContent>
+        Are you sure you want to delete this counter?
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={onConfirm} color="error">Delete</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 const ThreeDotMenu = ({ 
   id, 
   onDelete,
@@ -66,6 +89,7 @@ const ThreeDotMenu = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [setValueModalOpen, setSetValueModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false); // Add state for delete modal
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -80,7 +104,7 @@ const ThreeDotMenu = ({
     handleClose();
     switch (action) {
       case 'delete':
-        onDelete(id);
+        setDeleteModalOpen(true); // Open delete confirmation modal instead of deleting directly
         break;
       case 'viewID':
         navigator.clipboard.writeText(id);
@@ -91,6 +115,11 @@ const ThreeDotMenu = ({
       default:
         throw new Error('Unhandled action type');
     }
+  };
+
+  const handleConfirmDelete = () => {
+    onDelete(id);
+    setDeleteModalOpen(false);
   };
 
   return (
@@ -120,6 +149,11 @@ const ThreeDotMenu = ({
         onClose={() => setSetValueModalOpen(false)}
         id={id}
         onSetValue={onSetValue}
+      />
+      <DeleteConfirmationModal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   );

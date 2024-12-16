@@ -11,7 +11,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   const [isAddingCounter, setIsAddingCounter] = useState(false);
   const [newCounterName, setNewCounterName] = useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const { newCounterLoading } = useContext(FolderContext);
+  const { newCounterLoading, folderId, setFolderId } = useContext(FolderContext);
 
   const handleOpenDeleteDialog = () => setOpenDeleteDialog(true);
   const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
@@ -35,6 +35,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   
   const handleAddFolder = () => {
     if (newCounterName.trim()) {
+      setFolderId(id);
       onAddCounter(id, {
         id: uuidv4(),
         name: newCounterName,
@@ -118,7 +119,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                 onDelete={() => onDeleteCounter(id, counter.id)}
               />
             ))}
-            {newCounterLoading && (
+            {newCounterLoading && folderId === id && (
               <div className="flex justify-center items-center">
                 <GradientCircularProgress />
               </div>
