@@ -48,7 +48,7 @@ const Navbar = () => {
                 textTransform: 'none',
                 borderRadius: '9999px',
                 padding: {
-                  xs: '0',
+                  xs: '0 0 0 2px',
                   sm: '4px 12px'
                 },
                 minWidth: {
@@ -60,9 +60,18 @@ const Navbar = () => {
                   xs: '36px',
                   sm: 'auto'
                 },
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                '& .MuiButton-startIcon': {
+                  display: {
+                    xs: 'none',
+                    sm: 'inherit'
+                  }
+                }
               }}
             >
-              <span className="sm:hidden text-lg">+</span>
+              <p className="sm:hidden text-lg leading-none m-0">+</p>
               <span className="hidden sm:inline">New Folder</span>
             </Button>
             
