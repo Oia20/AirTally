@@ -26,6 +26,7 @@ model User {
 model Folder {
   id        String    @id @default(uuid())
   title     String
+  viewMode  String    @default("card")
   counters  Counters[]
   user      User     @relation(fields: [userId], references: [id])
   userId    String

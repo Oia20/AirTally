@@ -19,7 +19,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import CounterMenu from "./counterMenu";
 
-const Counter = ({ id, name, incrementBy, initialValue, onDelete }: CounterProps) => {
+const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'card' }: CounterProps) => {
   const { isDarkMode } = useTheme();
   const [count, setCount] = useState<number>(initialValue);
   const [step, setStep] = useState<number>(incrementBy);
@@ -107,6 +107,57 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete }: CounterProps
       });
     }
   };
+
+  if (viewMode === 'compact') {
+    return (
+      <div className={`${
+        isDarkMode 
+          ? 'bg-gray-800/80 border-gray-700' 
+          : 'bg-gray-100/80 border-gray-200'
+      } p-3 rounded-lg shadow-sm w-full transition-all duration-200 hover:shadow-md border backdrop-blur-sm`}>
+        <div className="flex items-center justify-between">
+          <h3 className={`text-sm font-medium ${
+            isDarkMode ? 'text-gray-100' : 'text-gray-900'
+          }`}>
+            {name}
+          </h3>
+          
+          <div className="flex items-center gap-2">
+            <IconButton
+              onClick={() => decrement(id)}
+              disabled={count <= 0}
+              size="small"
+              sx={{
+                color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+                padding: '4px',
+              }}
+            >
+              <RemoveIcon fontSize="small" />
+            </IconButton>
+            
+            <span className={`text-lg font-semibold min-w-[3ch] text-center ${
+              isDarkMode ? 'text-gray-100' : 'text-gray-900'
+            }`}>
+              {count}
+            </span>
+            
+            <IconButton
+              onClick={() => increment(id)}
+              size="small"
+              sx={{
+                color: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
+                padding: '4px',
+              }}
+            >
+              <AddIcon fontSize="small" />
+            </IconButton>
+            
+            <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} compact />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`${

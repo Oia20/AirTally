@@ -5,6 +5,7 @@ import { FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 import { FolderContext } from "./folderContext";
 import { useTheme } from "./themeContext";
+import { useAuth } from "./authContext";
 import { 
   CircularProgress, 
   Dialog, 
@@ -20,9 +21,12 @@ import {
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AddIcon from '@mui/icons-material/Add';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import ViewListIcon from '@mui/icons-material/ViewList';
 
 const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }: FolderProps) => {
   const { isDarkMode } = useTheme();
+  const { isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isAddingCounter, setIsAddingCounter] = useState(false);
   const [newCounterName, setNewCounterName] = useState("");
@@ -30,6 +34,8 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   const { newCounterLoading, folderId, setFolderId } = useContext(FolderContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { viewMode, setViewMode } = useContext(FolderContext);
+  const [folderViewMode, setFolderViewMode] = useState<'card' | 'compact'>('card');
   
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -39,6 +45,42 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   const handleClose = () => setAnchorEl(null);
   const handleOpenDeleteDialog = () => setOpenDeleteDialog(true);
   const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
+
+  useEffect(() => {
+    const fetchFolderViewMode = async () => {
+      if (isAuthenticated) {
+        try {
+          const response = await fetch(`/api/folders/getViewMode?folderId=${id}`);
+          const data = await response.json();
+          setFolderViewMode(data.viewMode || 'card');
+        } catch (error) {
+          console.error('Error fetching folder view mode:', error);
+        }
+      }
+    };
+    fetchFolderViewMode();
+  }, [id, isAuthenticated]);
+
+  const handleViewModeChange = async (mode: 'card' | 'compact') => {
+    setFolderViewMode(mode);
+    if (isAuthenticated) {
+      try {
+        await fetch('/api/folders/updateViewMode', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ viewMode: mode, folderId: id })
+        });
+      } catch (error) {
+        console.error('Error updating view mode:', error);
+      }
+    }
+  };
+
+  const handleViewModeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newMode = folderViewMode === 'card' ? 'compact' : 'card';
+    handleViewModeChange(newMode);
+  };
 
   function GradientCircularProgress() {
     return (
@@ -100,6 +142,20 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
           />
         </div>
         <div className="flex gap-2">
+          <Tooltip title={folderViewMode === 'card' ? 'Compact View' : 'Card View'}>
+            <IconButton
+              onClick={handleViewModeClick}
+              size="small"
+              sx={{
+                color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+                '&:hover': {
+                  backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+                }
+              }}
+            >
+              {folderViewMode === 'card' ? <ViewListIcon /> : <ViewModuleIcon />}
+            </IconButton>
+          </Tooltip>
           <Tooltip title="Add Counter">
             <IconButton
               onClick={(e) => {
@@ -208,7 +264,11 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
               </div>  
             </div>
           )}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+          <div className={`${
+            folderViewMode === 'card' 
+              ? 'grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6' 
+              : 'space-y-2'
+          }`}>
             {counters.map((counter) => (
               <Counter
                 key={counter.id}
@@ -216,6 +276,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                 initialValue={counter.count}
                 incrementBy={counter.step}
                 onDelete={() => onDeleteCounter(id, counter.id)}
+                viewMode={folderViewMode}
               />
             ))}
             {newCounterLoading && folderId === id && (

@@ -138,15 +138,14 @@ const DeleteConfirmationModal = ({ open, onClose, onConfirm }: DeleteConfirmatio
   );
 };
 
-const ThreeDotMenu = ({ 
-  id, 
-  onDelete,
-  onSetValue 
-}: { 
-  id: string, 
-  onDelete: (id: string) => void,
-  onSetValue: (id: string, value: number) => void 
-}) => {
+interface CounterMenuProps {
+  id: string;
+  onDelete: (id: string) => void;
+  onSetValue: (id: string, value: number) => void;
+  compact?: boolean;
+}
+
+const CounterMenu = ({ id, onDelete, onSetValue, compact }: CounterMenuProps) => {
   const { isDarkMode } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [setValueModalOpen, setSetValueModalOpen] = useState(false);
@@ -266,4 +265,4 @@ const ThreeDotMenu = ({
   );
 };
 
-export default ThreeDotMenu;
+export default CounterMenu;
