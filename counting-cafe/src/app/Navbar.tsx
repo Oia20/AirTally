@@ -23,32 +23,47 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-cyan-50 border-blue-200'} 
-      shadow-sm border-b transition-colors duration-200`}>
+    <nav className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-cyan-50/80 border-blue-200'} 
+      shadow-sm border-b transition-colors duration-200 sticky top-0 backdrop-blur-sm z-50`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center">
-            <span className={`text-xl font-bold ${isDarkMode ? 'text-fuchsia-400' : 'text-fuchsia-800'}`}>
+          <div className="flex items-center space-x-2">
+            <span className={`text-xl font-bold ${isDarkMode ? 'text-fuchsia-400' : 'text-fuchsia-800'} 
+              transition-all duration-300 hover:scale-105`}>
               AirTally
             </span>
-            {isAuthenticated && userId && (
-              <span className={`text-sm ml-2 ${isDarkMode ? 'text-violet-400' : 'text-violet-500'}`}>
-                ID: {userId}
-              </span>
-            )}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Button 
               onClick={() => setIsAddingFolder(true)}
               variant="contained"
+              startIcon={<span className="hidden sm:inline text-lg">+</span>}
               sx={{
-                backgroundColor: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)', // fuchsia-400 : fuchsia-600
+                backgroundColor: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
                 '&:hover': {
-                  backgroundColor: isDarkMode ? 'rgb(217, 70, 239)' : 'rgb(134, 25, 143)' // fuchsia-500 : fuchsia-800
-                }
+                  backgroundColor: isDarkMode ? 'rgb(217, 70, 239)' : 'rgb(134, 25, 143)',
+                  transform: 'scale(1.05)',
+                },
+                transition: 'all 0.2s',
+                textTransform: 'none',
+                borderRadius: '9999px',
+                padding: {
+                  xs: '0',
+                  sm: '4px 12px'
+                },
+                minWidth: {
+                  xs: '36px',
+                  sm: 'auto'
+                },
+                height: '36px',
+                width: {
+                  xs: '36px',
+                  sm: 'auto'
+                },
               }}
             >
-              New Folder
+              <span className="sm:hidden text-lg">+</span>
+              <span className="hidden sm:inline">New Folder</span>
             </Button>
             
             <IconButton

@@ -190,20 +190,11 @@ const Folders = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-cyan-50'} transition-colors duration-200`}>
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-gray-50'} transition-colors duration-200`}>
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-4xl mx-auto">
-          <header className="text-center mb-12">
-            <h1 className={`text-4xl font-bold mb-3 ${
-              isDarkMode ? 'text-fuchsia-400' : 'text-fuchsia-800'
-            } transition-colors duration-200`}>
-              AirTally
-            </h1>
-            <p className={`${
-              isDarkMode ? 'text-violet-400' : 'text-violet-500'
-            } transition-colors duration-200`}>
-              The web app for counting... Anything!
-            </p>
+          <header className="text-center mb-16">
+
           </header>
 
           {isAddingFolder && (

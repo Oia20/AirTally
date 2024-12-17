@@ -111,9 +111,9 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete }: CounterProps
   return (
     <div className={`${
       isDarkMode 
-        ? 'bg-gray-800 border-gray-700' 
-        : 'bg-white border-gray-100'
-    } p-6 rounded-xl shadow-sm w-full transition-all hover:shadow-md border`}>
+        ? 'bg-gray-800/80 border-gray-700' 
+        : 'bg-gray-100/80 border-gray-200'
+    } p-4 sm:p-6 rounded-xl shadow-sm w-full transition-all duration-200 hover:shadow-md border backdrop-blur-sm`}>
       <div className="flex justify-between items-center mb-6">
         <h3 className={`text-lg font-medium ${
           isDarkMode ? 'text-gray-100' : 'text-gray-900'
@@ -123,7 +123,7 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete }: CounterProps
         <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} />
       </div>
 
-      <div className="flex justify-between items-center gap-4">
+      <div className="flex justify-between items-center gap-3 sm:gap-4">
         <IconButton
           onClick={() => decrement(id)}
           disabled={count <= 0}
@@ -131,19 +131,21 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete }: CounterProps
             color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
             backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)',
             '&:hover': {
-              backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.2)' : 'rgba(139, 92, 246, 0.2)'
+              backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.15)' : 'rgba(139, 92, 246, 0.15)'
             },
             '&.Mui-disabled': {
               color: isDarkMode ? 'rgba(167, 139, 250, 0.3)' : 'rgba(139, 92, 246, 0.3)'
-            }
+            },
+            transition: 'all 0.2s',
+            padding: '12px',
           }}
         >
           <RemoveIcon />
         </IconButton>
         
-        <div className={`text-3xl font-semibold ${
+        <div className={`text-3xl sm:text-4xl font-semibold ${
           isDarkMode ? 'text-gray-100' : 'text-gray-900'
-        }`}>
+        } transition-colors duration-200`}>
           {count}
         </div>
         

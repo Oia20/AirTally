@@ -78,9 +78,9 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   return (
     <div className={`${
       isDarkMode 
-        ? 'bg-gray-800 border-gray-700' 
-        : 'bg-white border-gray-100'
-    } p-6 rounded-xl shadow-sm border transition-colors duration-200`}>
+        ? 'bg-gray-800/90 border-gray-700' 
+        : 'bg-gray-100/90 border-gray-200'
+    } p-4 sm:p-6 rounded-xl shadow-sm border transition-all duration-200 hover:shadow-md`}>
       <div className="flex justify-between items-center">
         <div
           className="flex items-center cursor-pointer group"
@@ -166,7 +166,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
       {isOpen && (
         <div className="mt-6 space-y-6">
           {isAddingCounter && (
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center sm:flex-row flex-col">
               <input
                 ref={inputRef}
                 type="text"
@@ -180,9 +180,10 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                   } transition-colors duration-200`}
                 autoFocus
               />
-              <Button
-                onClick={handleAddCounter}
-                variant="contained"
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleAddCounter}
+                  variant="contained"
                 sx={{
                   backgroundColor: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
                   '&:hover': {
@@ -203,10 +204,11 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                 }}
               >
                 Cancel
-              </Button>
+                </Button>
+              </div>  
             </div>
           )}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             {counters.map((counter) => (
               <Counter
                 key={counter.id}
