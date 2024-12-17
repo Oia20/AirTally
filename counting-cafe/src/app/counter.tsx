@@ -7,7 +7,7 @@ import { useAuth } from "./authContext";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import CounterMenu from "./counterMenu";
 
-const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterProps) => {
+const Counter = ({ id, name, incrementBy , initialValue, onDelete }: CounterProps) => {
   const [count, setCount] = useState<number>(initialValue);
   const [step, setStep] = useState<number>(incrementBy);
   const [openResetDialog, setOpenResetDialog] = useState(false);
@@ -26,6 +26,19 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ id }),
+      });
+    }
+  };
+
+  const updateStep = async (id: string, step: number) => {
+    setStep(step);
+    if (isAuthenticated) {
+      const response = await fetch('/api/counters/updateStep', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, step }),
       });
     }
   };
@@ -140,7 +153,7 @@ const Counter = ({ id, name, incrementBy = 1, initialValue, onDelete }: CounterP
           <input
             type="number"
             value={step}
-            onChange={(e) => setStep(Math.max(1, Number(e.target.value)))}
+            onChange={(e) => updateStep(id, Math.max(1, Number(e.target.value)))}
             className="w-16 px-2 py-1 border rounded-md text-center text-gray-900"
             min="1"
           />

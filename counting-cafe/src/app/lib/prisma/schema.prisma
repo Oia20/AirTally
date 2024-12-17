@@ -20,19 +20,7 @@ model User {
   refreshToken  String?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  timers        Timers[]
   folders       Folder[]
-}
-
-model Timers {
-  id        String   @id @default(uuid())
-  name      String
-  increment Int
-  initial   Int
-  step      Int      @default(1)
-  folder    Folder   @relation(fields: [folderId], references: [id])
-  folderId  String
-  User      User[]
 }
 
 model Folder {
@@ -41,13 +29,13 @@ model Folder {
   counters  Counters[]
   user      User     @relation(fields: [userId], references: [id])
   userId    String
-  Timers    Timers[]
 }
 
 model Counters {
   id        String    @id @default(uuid())
   name      String
   increment Int
+  step      Int      @default(1)
   initial   Int
   count     Int      @default(0)
   folder    Folder   @relation(fields: [folderId], references: [id])

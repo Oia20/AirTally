@@ -5,6 +5,7 @@
     incrementBy: number;
     count: number;
     initialValue: number;
+    step: number;
     onDelete: (id: string) => void;
   }
   

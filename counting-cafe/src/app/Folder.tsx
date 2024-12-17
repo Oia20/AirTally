@@ -53,6 +53,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
         incrementBy: 1,
         count: 0,
         initialValue: 0,
+        step: 1,
       });
       setNewCounterName("");
     }
@@ -157,6 +158,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                 key={counter.id}
                 {...counter}
                 initialValue={counter.count}
+                incrementBy={counter.step}
                 onDelete={() => onDeleteCounter(id, counter.id)}
               />
             ))}
