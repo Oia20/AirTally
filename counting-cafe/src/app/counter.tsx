@@ -4,10 +4,23 @@
 import { useState, useCallback } from "react";
 import { CounterProps } from "./types";
 import { useAuth } from "./authContext";
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
+import { useTheme } from "./themeContext";
+import { 
+  Button, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogTitle,
+  IconButton,
+  Tooltip
+} from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import CounterMenu from "./counterMenu";
 
-const Counter = ({ id, name, incrementBy , initialValue, onDelete }: CounterProps) => {
+const Counter = ({ id, name, incrementBy, initialValue, onDelete }: CounterProps) => {
+  const { isDarkMode } = useTheme();
   const [count, setCount] = useState<number>(initialValue);
   const [step, setStep] = useState<number>(incrementBy);
   const [openResetDialog, setOpenResetDialog] = useState(false);
@@ -16,15 +29,12 @@ const Counter = ({ id, name, incrementBy , initialValue, onDelete }: CounterProp
   const handleOpenResetDialog = () => setOpenResetDialog(true);
   const handleCloseResetDialog = () => setOpenResetDialog(false);
 
-  // Delete counter, implement into popup like this onClick={() => deleteCounter(id)}
   const deleteCounter = async (id: string) => {
     onDelete(id);
     if (isAuthenticated) {
-      const response = await fetch('/api/counters/deleteCounter', {
+      await fetch('/api/counters/deleteCounter', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
       });
     }
@@ -33,11 +43,9 @@ const Counter = ({ id, name, incrementBy , initialValue, onDelete }: CounterProp
   const updateStep = async (id: string, step: number) => {
     setStep(step);
     if (isAuthenticated) {
-      const response = await fetch('/api/counters/updateStep', {
+      await fetch('/api/counters/updateStep', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, step }),
       });
     }
@@ -48,33 +56,21 @@ const Counter = ({ id, name, incrementBy , initialValue, onDelete }: CounterProp
     if (isAuthenticated) {
       const response = await fetch('/api/counters/incrementCounter', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, count: value }),
       });
-      if (!response.ok) {
-        throw new Error('Failed to set counter value');
-      }
+      if (!response.ok) throw new Error('Failed to set counter value');
     }
   };
 
   const incrementCounter = async (id: string, updatedCount: number) => {
-    console.log(id, updatedCount, step, "sassasasasasas");
     const response = await fetch('/api/counters/incrementCounter', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id, count: updatedCount }),
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to increment counter');
-    }
-
-    const updatedCounter = await response.json();
-    return updatedCounter;
+    if (!response.ok) throw new Error('Failed to increment counter');
+    return await response.json();
   };
 
   const increment = useCallback(async (id: string) => {
@@ -87,7 +83,7 @@ const Counter = ({ id, name, incrementBy , initialValue, onDelete }: CounterProp
         console.error(error);
       }
     }
-  }, [count, step]);
+  }, [count, step, isAuthenticated]);
 
   const decrement = useCallback(async (id: string) => {
     const newCount = count - step;
@@ -99,62 +95,107 @@ const Counter = ({ id, name, incrementBy , initialValue, onDelete }: CounterProp
         console.error(error);
       }
     }
-  }, [count, step]);
+  }, [count, step, isAuthenticated]);
 
   const reset = async () => {
     if (isAuthenticated) {
       setCount(0);
-      const response = await fetch('/api/counters/resetCounter', {
+      await fetch('/api/counters/resetCounter', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
       });
     }
   };
 
-
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm w-full transition-all hover:shadow-md border border-gray-100">
+    <div className={`${
+      isDarkMode 
+        ? 'bg-gray-800 border-gray-700' 
+        : 'bg-white border-gray-100'
+    } p-6 rounded-xl shadow-sm w-full transition-all hover:shadow-md border`}>
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-lg font-medium text-gray-900">{name}</h3>
-
-        {/* Delete counter, implement into popup like this onClick={() => deleteCounter(id)} */}
+        <h3 className={`text-lg font-medium ${
+          isDarkMode ? 'text-gray-100' : 'text-gray-900'
+        }`}>
+          {name}
+        </h3>
         <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} />
       </div>
 
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-        <Button
+      <div className="flex justify-between items-center gap-4">
+        <IconButton
           onClick={() => decrement(id)}
-          className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:opacity-50"
           disabled={count <= 0}
+          sx={{
+            color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+            backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)',
+            '&:hover': {
+              backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.2)' : 'rgba(139, 92, 246, 0.2)'
+            },
+            '&.Mui-disabled': {
+              color: isDarkMode ? 'rgba(167, 139, 250, 0.3)' : 'rgba(139, 92, 246, 0.3)'
+            }
+          }}
         >
-          <span className="text-xl">−</span>
-        </Button>
-        <div className="text-3xl font-semibold text-gray-900">{count}</div>
-        <Button
+          <RemoveIcon />
+        </IconButton>
+        
+        <div className={`text-3xl font-semibold ${
+          isDarkMode ? 'text-gray-100' : 'text-gray-900'
+        }`}>
+          {count}
+        </div>
+        
+        <IconButton
           onClick={() => increment(id)}
-          className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+          sx={{
+            color: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
+            backgroundColor: isDarkMode ? 'rgba(232, 121, 249, 0.1)' : 'rgba(192, 38, 211, 0.1)',
+            '&:hover': {
+              backgroundColor: isDarkMode ? 'rgba(232, 121, 249, 0.2)' : 'rgba(192, 38, 211, 0.2)'
+            }
+          }}
         >
-          <span className="text-xl">+</span>
-        </Button>
+          <AddIcon />
+        </IconButton>
       </div>
 
-      <div className="mt-6 flex justify-between items-center text-sm">
-        <button
-          onClick={handleOpenResetDialog}
-          className="text-gray-500 hover:text-gray-700 transition-colors focus:outline-none"
-        >
-          Reset
-        </button>
+      <div className="mt-6 flex justify-between items-center">
+        <Tooltip title="Reset Counter">
+          <IconButton
+            onClick={handleOpenResetDialog}
+            size="small"
+            sx={{
+              color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+              '&:hover': {
+                backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+              }
+            }}
+          >
+            <RestartAltIcon fontSize="small" />
+          </IconButton>
+        </Tooltip>
+        
         <div className="flex items-center gap-2">
-          <span className="text-gray-400">Step:</span>
+          <span className={`text-sm ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-500'
+          }`}>
+            Step:
+          </span>
           <input
             type="number"
             value={step}
             onChange={(e) => updateStep(id, Math.max(1, Number(e.target.value)))}
-            className="w-16 px-2 py-1 border rounded-md text-center text-gray-900"
+            className={`w-16 px-2 py-1 border rounded-md text-center ${
+              isDarkMode 
+                ? 'bg-gray-700 border-gray-600 text-gray-100' 
+                : 'bg-white border-gray-200 text-gray-900'
+            } focus:outline-none focus:ring-2 ${
+              isDarkMode 
+                ? 'focus:ring-violet-400/20' 
+                : 'focus:ring-violet-500/20'
+            }`}
             min="1"
           />
         </div>
@@ -163,20 +204,36 @@ const Counter = ({ id, name, incrementBy , initialValue, onDelete }: CounterProp
       <Dialog
         open={openResetDialog}
         onClose={handleCloseResetDialog}
-        aria-labelledby="reset-dialog-title"
+        PaperProps={{
+          sx: {
+            backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
+            color: isDarkMode ? 'rgb(243, 244, 246)' : 'rgb(17, 24, 39)'
+          }
+        }}
       >
-        <DialogTitle id="reset-dialog-title">Confirm Reset</DialogTitle>
+        <DialogTitle>Reset Counter?</DialogTitle>
         <DialogContent>
-          Are you sure you want to reset the {name} counter?
+          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+            Are you sure you want to reset the "{name}" counter to zero?
+          </p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseResetDialog}>Cancel</Button>
+          <Button 
+            onClick={handleCloseResetDialog}
+            sx={{
+              color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)'
+            }}
+          >
+            Cancel
+          </Button>
           <Button 
             onClick={() => {
               reset();
               handleCloseResetDialog();
-            }} 
-            color="error"
+            }}
+            sx={{
+              color: isDarkMode ? 'rgb(248, 113, 113)' : 'rgb(239, 68, 68)'
+            }}
           >
             Reset
           </Button>

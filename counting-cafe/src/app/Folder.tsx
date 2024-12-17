@@ -4,11 +4,25 @@ import Counter from "./counter";
 import { FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 import { FolderContext } from "./folderContext";
-import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
+import { useTheme } from "./themeContext";
+import { 
+  CircularProgress, 
+  Dialog, 
+  DialogActions, 
+  DialogContent, 
+  DialogTitle, 
+  Button,
+  IconButton, 
+  Menu, 
+  MenuItem,
+  Tooltip
+} from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { IconButton, Menu, MenuItem } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }: FolderProps) => {
+  const { isDarkMode } = useTheme();
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const [isAddingCounter, setIsAddingCounter] = useState(false);
   const [newCounterName, setNewCounterName] = useState("");
@@ -16,35 +30,28 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   const { newCounterLoading, folderId, setFolderId } = useContext(FolderContext);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
+  
+  const handleClose = () => setAnchorEl(null);
   const handleOpenDeleteDialog = () => setOpenDeleteDialog(true);
   const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
 
   function GradientCircularProgress() {
     return (
-      <>
-      {/* Adjust colors of counter loading animation here in future. */}
-        <svg width={0} height={0}>
-          <defs>
-            <linearGradient id="my_gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stopColor="#e01cd5" />
-              <stop offset="100%" stopColor="#1CB5E0" />
-            </linearGradient>
-          </defs>
-        </svg>
-        <CircularProgress sx={{ 'svg circle': { stroke: 'url(#my_gradient)' } }} />
-      </>
+      <CircularProgress 
+        sx={{ 
+          color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(192, 38, 211)',
+          transition: 'color 0.2s'
+        }} 
+      />
     );
   }
   
-  const handleAddFolder = () => {
+  const handleAddCounter = () => {
     if (newCounterName.trim()) {
       setFolderId(id);
       onAddCounter(id, {
@@ -69,27 +76,56 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   }, [isAddingCounter]);
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+    <div className={`${
+      isDarkMode 
+        ? 'bg-gray-800 border-gray-700' 
+        : 'bg-white border-gray-100'
+    } p-6 rounded-xl shadow-sm border transition-colors duration-200`}>
       <div className="flex justify-between items-center">
         <div
-          className="flex items-center cursor-pointer"
+          className="flex items-center cursor-pointer group"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <h2 className="text-xl font-medium text-gray-900">{title}</h2>
-          <span 
-            className="ml-2 text-gray-400 transition-transform duration-200" 
-            style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-          >
-            ▼
-          </span>
+          <h2 className={`text-xl font-medium ${
+            isDarkMode ? 'text-gray-100' : 'text-gray-900'
+          } transition-colors duration-200`}>
+            {title}
+          </h2>
+          <KeyboardArrowDownIcon 
+            className={`ml-2 ${
+              isDarkMode ? 'text-violet-400' : 'text-violet-500'
+            } transition-all duration-200 ${
+              isOpen ? 'rotate-180' : 'rotate-0'
+            } opacity-50 group-hover:opacity-100`}
+          />
         </div>
         <div className="flex gap-2">
+          <Tooltip title="Add Counter">
+            <IconButton
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAddingCounter(true);
+              }}
+              size="small"
+              sx={{
+                color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+                '&:hover': {
+                  backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+                }
+              }}
+            >
+              <AddIcon />
+            </IconButton>
+          </Tooltip>
           <IconButton
             onClick={handleClick}
             size="small"
-            aria-controls={open ? 'folder-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
+            sx={{
+              color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+              '&:hover': {
+                backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+              }
+            }}
           >
             <MoreVertIcon />
           </IconButton>
@@ -99,25 +135,27 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
             open={open}
             onClose={handleClose}
             onClick={(e) => e.stopPropagation()}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            slotProps={{
+              paper: {
+                sx: {
+                  backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
+                  borderColor: isDarkMode ? 'rgb(75, 85, 99)' : 'rgb(229, 231, 235)'
+                }
+              }
+            }}
           >
-            <MenuItem
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsAddingCounter(true);
-                handleClose();
-              }}
-            >
-              Add Counter
-            </MenuItem>
             <MenuItem
               onClick={(e) => {
                 e.stopPropagation();
                 handleOpenDeleteDialog();
                 handleClose();
               }}
-              sx={{ color: 'error.main' }}
+              sx={{ 
+                color: isDarkMode ? 'rgb(248, 113, 113)' : 'rgb(239, 68, 68)',
+                '&:hover': {
+                  backgroundColor: isDarkMode ? 'rgba(248, 113, 113, 0.1)' : 'rgba(239, 68, 68, 0.1)'
+                }
+              }}
             >
               Delete Folder
             </MenuItem>
@@ -135,21 +173,37 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
                 value={newCounterName}
                 onChange={(e) => setNewCounterName(e.target.value)}
                 placeholder="Counter name"
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-gray-900"
+                className={`flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 
+                  ${isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-gray-100 focus:ring-violet-400/20' 
+                    : 'bg-white border-gray-200 text-gray-900 focus:ring-violet-500/20'
+                  } transition-colors duration-200`}
                 autoFocus
               />
-              <button
-                onClick={handleAddFolder}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+              <Button
+                onClick={handleAddCounter}
+                variant="contained"
+                sx={{
+                  backgroundColor: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
+                  '&:hover': {
+                    backgroundColor: isDarkMode ? 'rgb(217, 70, 239)' : 'rgb(134, 25, 143)'
+                  }
+                }}
               >
                 Add
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setIsAddingCounter(false)}
-                className="px-4 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                variant="text"
+                sx={{
+                  color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+                  '&:hover': {
+                    backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+                  }
+                }}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -163,7 +217,11 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
               />
             ))}
             {newCounterLoading && folderId === id && (
-              <div className="flex justify-center items-center bg-white p-6 rounded-xl shadow-sm w-full transition-all hover:shadow-md border border-gray-100">
+              <div className={`flex justify-center items-center p-6 rounded-xl shadow-sm w-full transition-all hover:shadow-md border
+                ${isDarkMode 
+                  ? 'bg-gray-800 border-gray-700' 
+                  : 'bg-white border-gray-100'
+                }`}>
                 <GradientCircularProgress />
               </div>
             )}
@@ -174,20 +232,36 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
       <Dialog
         open={openDeleteDialog}
         onClose={handleCloseDeleteDialog}
-        aria-labelledby="delete-dialog-title"
+        PaperProps={{
+          sx: {
+            backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
+            color: isDarkMode ? 'rgb(243, 244, 246)' : 'rgb(17, 24, 39)'
+          }
+        }}
       >
-        <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogTitle>Delete Folder?</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete the folder "{title}"? This action cannot be undone and all counters in this folder will be deleted.
+          <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+            Are you sure you want to delete "{title}"? This action cannot be undone and all counters in this folder will be deleted.
+          </p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
+          <Button 
+            onClick={handleCloseDeleteDialog}
+            sx={{
+              color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)'
+            }}
+          >
+            Cancel
+          </Button>
           <Button 
             onClick={() => {
               onDelete(id);
               handleCloseDeleteDialog();
-            }} 
-            color="error"
+            }}
+            sx={{
+              color: isDarkMode ? 'rgb(248, 113, 113)' : 'rgb(239, 68, 68)'
+            }}
           >
             Delete
           </Button>

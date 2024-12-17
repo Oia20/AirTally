@@ -10,6 +10,8 @@ import { FolderContext } from "./folderContext";
 import { useAuth } from "./authContext";
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
+import Button from '@mui/material/Button';
+import { useTheme } from "./themeContext";
 
 const initialFolders: FolderProps[] = [
   {
@@ -45,6 +47,7 @@ const initialFolders: FolderProps[] = [
 const Folders = () => {
   const { isAuthenticated, userId } = useAuth();
   const { isAddingFolder, setIsAddingFolder } = useContext(FolderContext);
+  const { isDarkMode } = useTheme();
   const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
   const [newFolderTitle, setNewFolderTitle] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -187,13 +190,20 @@ const Folders = () => {
   };
 
   return (
-    <>
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen ${isDarkMode ? 'bg-gray-900' : 'bg-cyan-50'} transition-colors duration-200`}>
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-4xl mx-auto">
           <header className="text-center mb-12">
-            <h1 className="text-3xl font-semibold text-gray-900 mb-3">AirTally</h1>
-            <p className="text-gray-500">The web app for counting... Anything!</p>
+            <h1 className={`text-4xl font-bold mb-3 ${
+              isDarkMode ? 'text-fuchsia-400' : 'text-fuchsia-800'
+            } transition-colors duration-200`}>
+              AirTally
+            </h1>
+            <p className={`${
+              isDarkMode ? 'text-violet-400' : 'text-violet-500'
+            } transition-colors duration-200`}>
+              The web app for counting... Anything!
+            </p>
           </header>
 
           {isAddingFolder && (
@@ -203,48 +213,85 @@ const Folders = () => {
                 value={newFolderTitle}
                 onChange={(e) => setNewFolderTitle(e.target.value)}
                 placeholder="Folder name"
-                className="flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 text-gray-900"
+                className={`flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 
+                  ${isDarkMode 
+                    ? 'bg-gray-800 border-gray-700 text-gray-100 focus:ring-fuchsia-400/20' 
+                    : 'bg-white border-blue-200 text-gray-900 focus:ring-fuchsia-500/20'
+                  } transition-colors duration-200`}
                 autoFocus
               />
-              <button
+              <Button
                 onClick={addFolder}
-                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                variant="contained"
+                sx={{
+                  backgroundColor: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
+                  '&:hover': {
+                    backgroundColor: isDarkMode ? 'rgb(217, 70, 239)' : 'rgb(134, 25, 143)'
+                  },
+                  transition: 'background-color 0.2s'
+                }}
               >
                 Add
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setIsAddingFolder(false)}
-                className="px-4 py-2 text-gray-500 hover:text-gray-700 transition-colors"
+                variant="text"
+                sx={{
+                  color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+                  '&:hover': {
+                    backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+                  }
+                }}
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           )}
 
           {isLoading ? (
             <div className="text-center mt-12">
-              <p className="text-gray-500 mb-2">Loading your glorious counters...</p>
+              <p className={`mb-2 ${
+                isDarkMode ? 'text-violet-400' : 'text-violet-500'
+              } transition-colors duration-200`}>
+                Loading your glorious counters...
+              </p>
               <Box sx={{ width: '100%' }}>
-                <LinearProgress sx={{ height: 5, borderRadius: 5 }} color="info"/>
+                <LinearProgress 
+                  sx={{ 
+                    height: 5, 
+                    borderRadius: 5,
+                    backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.2)' : 'rgba(139, 92, 246, 0.2)',
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)'
+                    }
+                  }} 
+                />
               </Box>
             </div>
           ) : (
-          <div className="space-y-6">
-            {!isLoading && (
-              folders.map((folder) => (
+            <div className="space-y-6">
+              {folders.map((folder) => (
                 <Folder
                   key={folder.id}
                   {...folder}
                   onDelete={deleteFolder}
                   onAddCounter={addCounter}
-                onDeleteCounter={deleteCounter}
+                  onDeleteCounter={deleteCounter}
                 />
-              ))
-            )}
+              ))}
               {showFolderLoading && (
                 <div className="text-center mt-12">
                   <Box sx={{ width: '100%' }}>
-                    <LinearProgress sx={{ height: 5, borderRadius: 5 }} color="info"/>
+                    <LinearProgress 
+                      sx={{ 
+                        height: 5, 
+                        borderRadius: 5,
+                        backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.2)' : 'rgba(139, 92, 246, 0.2)',
+                        '& .MuiLinearProgress-bar': {
+                          backgroundColor: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)'
+                        }
+                      }} 
+                    />
                   </Box>
                 </div>
               )}
@@ -253,7 +300,6 @@ const Folders = () => {
         </div>
       </div>
     </div>
-    </>
   );
 };
 

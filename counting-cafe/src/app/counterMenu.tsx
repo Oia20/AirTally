@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 import MoreVertSharpIcon from '@mui/icons-material/MoreVertSharp';
+import { useTheme } from "./themeContext";
 
 // Define action types
 type ActionType = 'delete' | 'reset' | 'viewID' | 'setCounter';
@@ -13,6 +14,7 @@ interface SetCounterValueModalProps {
 }
 
 const SetCounterValueModal = ({ open, onClose, id, onSetValue }: SetCounterValueModalProps) => {
+  const { isDarkMode } = useTheme();
   const [value, setValue] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [deletingCounter, setDeletingCounter] = useState<boolean>(false);
@@ -30,7 +32,16 @@ const SetCounterValueModal = ({ open, onClose, id, onSetValue }: SetCounterValue
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog 
+      open={open} 
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
+          color: isDarkMode ? 'rgb(243, 244, 246)' : 'rgb(17, 24, 39)'
+        }
+      }}
+    >
       <DialogTitle>Set Counter Value</DialogTitle>
       <DialogContent>
         <TextField
@@ -46,11 +57,33 @@ const SetCounterValueModal = ({ open, onClose, id, onSetValue }: SetCounterValue
           }}
           error={!!error}
           helperText={error}
+          sx={{
+            '& .MuiInputLabel-root': {
+              color: isDarkMode ? 'rgb(156, 163, 175)' : 'inherit'
+            },
+            '& .MuiInputBase-input': {
+              color: isDarkMode ? 'rgb(243, 244, 246)' : 'inherit'
+            }
+          }}
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit}>Set Value</Button>
+        <Button 
+          onClick={onClose}
+          sx={{
+            color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)'
+          }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={handleSubmit}
+          sx={{
+            color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)'
+          }}
+        >
+          Set Value
+        </Button>
       </DialogActions>
     </Dialog>
   );
@@ -64,15 +97,42 @@ interface DeleteConfirmationModalProps {
 }
 
 const DeleteConfirmationModal = ({ open, onClose, onConfirm }: DeleteConfirmationModalProps) => {
+  const { isDarkMode } = useTheme();
+  
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog 
+      open={open} 
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
+          color: isDarkMode ? 'rgb(243, 244, 246)' : 'rgb(17, 24, 39)'
+        }
+      }}
+    >
       <DialogTitle>Confirm Delete</DialogTitle>
       <DialogContent>
-        Are you sure you want to delete this counter?
+        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+          Are you sure you want to delete this counter?
+        </p>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={onConfirm} color="error">Delete</Button>
+        <Button 
+          onClick={onClose}
+          sx={{
+            color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)'
+          }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={onConfirm} 
+          sx={{
+            color: isDarkMode ? 'rgb(248, 113, 113)' : 'rgb(239, 68, 68)'
+          }}
+        >
+          Delete
+        </Button>
       </DialogActions>
     </Dialog>
   );
@@ -87,6 +147,7 @@ const ThreeDotMenu = ({
   onDelete: (id: string) => void,
   onSetValue: (id: string, value: number) => void 
 }) => {
+  const { isDarkMode } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [setValueModalOpen, setSetValueModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false); // Add state for delete modal
@@ -124,7 +185,15 @@ const ThreeDotMenu = ({
 
   return (
     <div>
-      <IconButton onClick={handleClick}>
+      <IconButton 
+        onClick={handleClick}
+        sx={{
+          color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+          '&:hover': {
+            backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+          }
+        }}
+      >
         <MoreVertSharpIcon />
       </IconButton>
       <Menu
@@ -139,10 +208,48 @@ const ThreeDotMenu = ({
           vertical: 'top',
           horizontal: 'right',
         }}
+        slotProps={{
+          paper: {
+            sx: {
+              backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
+              borderColor: isDarkMode ? 'rgb(75, 85, 99)' : 'rgb(229, 231, 235)'
+            }
+          }
+        }}
       >
-        <MenuItem onClick={() => handleAction('delete')}>Delete</MenuItem>
-        <MenuItem onClick={() => handleAction('viewID')}>Copy ID</MenuItem>
-        <MenuItem onClick={() => handleAction('setCounter')}>Set Counter Value</MenuItem>
+        <MenuItem 
+          onClick={() => handleAction('delete')}
+          sx={{ 
+            color: isDarkMode ? 'rgb(248, 113, 113)' : 'rgb(239, 68, 68)',
+            '&:hover': {
+              backgroundColor: isDarkMode ? 'rgba(248, 113, 113, 0.1)' : 'rgba(239, 68, 68, 0.1)'
+            }
+          }}
+        >
+          Delete
+        </MenuItem>
+        <MenuItem 
+          onClick={() => handleAction('viewID')}
+          sx={{ 
+            color: isDarkMode ? 'rgb(243, 244, 246)' : 'inherit',
+            '&:hover': {
+              backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+            }
+          }}
+        >
+          Copy ID
+        </MenuItem>
+        <MenuItem 
+          onClick={() => handleAction('setCounter')}
+          sx={{ 
+            color: isDarkMode ? 'rgb(243, 244, 246)' : 'inherit',
+            '&:hover': {
+              backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+            }
+          }}
+        >
+          Set Counter Value
+        </MenuItem>
       </Menu>
       <SetCounterValueModal
         open={setValueModalOpen}
