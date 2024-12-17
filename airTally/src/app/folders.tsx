@@ -198,44 +198,48 @@ const Folders = () => {
           </header>
 
           {isAddingFolder && (
-            <div className="mb-6 flex gap-2">
+            <div className="mb-6 flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={newFolderTitle}
                 onChange={(e) => setNewFolderTitle(e.target.value)}
                 placeholder="Folder name"
-                className={`flex-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 
+                className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 
                   ${isDarkMode 
                     ? 'bg-gray-800 border-gray-700 text-gray-100 focus:ring-fuchsia-400/20' 
                     : 'bg-white border-blue-200 text-gray-900 focus:ring-fuchsia-500/20'
                   } transition-colors duration-200`}
                 autoFocus
               />
-              <Button
-                onClick={addFolder}
-                variant="contained"
-                sx={{
-                  backgroundColor: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
-                  '&:hover': {
-                    backgroundColor: isDarkMode ? 'rgb(217, 70, 239)' : 'rgb(134, 25, 143)'
-                  },
-                  transition: 'background-color 0.2s'
-                }}
-              >
-                Add
-              </Button>
-              <Button
-                onClick={() => setIsAddingFolder(false)}
-                variant="text"
-                sx={{
-                  color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
-                  '&:hover': {
-                    backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
-                  }
-                }}
-              >
-                Cancel
-              </Button>
+              <div className="flex gap-2 sm:w-auto w-full">
+                <Button
+                  onClick={addFolder}
+                  variant="contained"
+                  fullWidth
+                  sx={{
+                    backgroundColor: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
+                    '&:hover': {
+                      backgroundColor: isDarkMode ? 'rgb(217, 70, 239)' : 'rgb(134, 25, 143)'
+                    },
+                    transition: 'background-color 0.2s'
+                  }}
+                >
+                  Add
+                </Button>
+                <Button
+                  onClick={() => setIsAddingFolder(false)}
+                  variant="text"
+                  fullWidth
+                  sx={{
+                    color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+                    '&:hover': {
+                      backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+                    }
+                  }}
+                >
+                  Cancel
+                </Button>
+              </div>
             </div>
           )}
 
