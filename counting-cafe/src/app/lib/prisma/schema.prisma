@@ -29,6 +29,7 @@ model Timers {
   name      String
   increment Int
   initial   Int
+  step      Int
   folder    Folder   @relation(fields: [folderId], references: [id])
   folderId  String
   User      User[]

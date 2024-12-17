@@ -1,10 +1,12 @@
 // folder.tsx
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import Counter from "./counter";
 import { FolderProps } from "./types";
 import { v4 as uuidv4 } from 'uuid';
 import { FolderContext } from "./folderContext";
 import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Button } from "@mui/material";
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { IconButton, Menu, MenuItem } from '@mui/material';
 
 const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }: FolderProps) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
@@ -12,6 +14,15 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
   const [newCounterName, setNewCounterName] = useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { newCounterLoading, folderId, setFolderId } = useContext(FolderContext);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   const handleOpenDeleteDialog = () => setOpenDeleteDialog(true);
   const handleCloseDeleteDialog = () => setOpenDeleteDialog(false);
@@ -45,7 +56,16 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
       });
       setNewCounterName("");
     }
+    setIsAddingCounter(false);
   };
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isAddingCounter && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isAddingCounter]);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
@@ -63,24 +83,44 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
           </span>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setIsAddingCounter(true);
-            }}
-            className="text-blue-500 hover:text-blue-700 transition-colors px-3 py-1 rounded-md hover:bg-blue-50"
+          <IconButton
+            onClick={handleClick}
+            size="small"
+            aria-controls={open ? 'folder-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
           >
-            Add Counter
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleOpenDeleteDialog();
-            }}
-            className="text-red-500 hover:text-red-700 transition-colors px-3 py-1 rounded-md hover:bg-red-50"
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="folder-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            onClick={(e) => e.stopPropagation()}
+            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            Delete Folder
-          </button>
+            <MenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsAddingCounter(true);
+                handleClose();
+              }}
+            >
+              Add Counter
+            </MenuItem>
+            <MenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                handleOpenDeleteDialog();
+                handleClose();
+              }}
+              sx={{ color: 'error.main' }}
+            >
+              Delete Folder
+            </MenuItem>
+          </Menu>
         </div>
       </div>
 
@@ -89,6 +129,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
           {isAddingCounter && (
             <div className="flex gap-2 items-center">
               <input
+                ref={inputRef}
                 type="text"
                 value={newCounterName}
                 onChange={(e) => setNewCounterName(e.target.value)}
@@ -120,7 +161,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
               />
             ))}
             {newCounterLoading && folderId === id && (
-              <div className="flex justify-center items-center">
+              <div className="flex justify-center items-center bg-white p-6 rounded-xl shadow-sm w-full transition-all hover:shadow-md border border-gray-100">
                 <GradientCircularProgress />
               </div>
             )}

@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   const updatedCounter = await prisma.counters.update({
     where: { id: id },
-    data: { count: count },
+    data: { count: count, step: step },
   });
   
 
