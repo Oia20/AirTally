@@ -5,7 +5,7 @@ import { FolderContext } from "./folderContext";
 import { useAuth } from "./authContext";
 import Link from "next/link";
 import { Button, IconButton, Menu, MenuItem, Divider } from "@mui/material";
-import { AccountCircle, Brightness4, Brightness7 } from "@mui/icons-material";
+import { AccountCircle, Brightness4, Brightness7, Star, Login, Logout, NoAccounts } from "@mui/icons-material";
 import { useTheme } from "./themeContext";
 
 const Navbar = () => {
@@ -23,7 +23,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`${isDarkMode ? 'bg-gray-800/80 border-gray-700' : 'bg-cyan-50/80 border-blue-200'} 
+    <nav className={`${isDarkMode ? 'bg-gradient-to-r from-fuchsia-900/10 to-purple-900/10 border-gray-700' : 'bg-cyan-50/80 border-blue-200'} 
       shadow-sm border-b transition-colors duration-200 sticky top-0 backdrop-blur-sm z-50`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
@@ -75,7 +75,7 @@ const Navbar = () => {
                 }
               }}
             >
-              <AccountCircle />
+              {isAuthenticated ? <AccountCircle /> : <NoAccounts />}
             </IconButton>
             
             <Menu
@@ -85,7 +85,7 @@ const Navbar = () => {
               slotProps={{
                 paper: {
                   sx: {
-                    backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(236, 254, 255)', // gray-800 : cyan-50
+                    backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(236, 254, 255)',
                   }
                 }
               }}
@@ -99,24 +99,35 @@ const Navbar = () => {
                 Theme: {isDarkMode ? 'Light' : 'Dark'}
               </MenuItem>
               <Divider className={isDarkMode ? 'bg-gray-700' : 'bg-blue-200'} />
+              <MenuItem 
+                component="a"
+                href="https://github.com/Oia20/airtally"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${isDarkMode ? 'text-violet-400' : 'text-violet-500'} 
+                  hover:bg-blue-200/20`}
+              >
+              <Star className="mr-1" />on GitHub
+              </MenuItem>
+              <Divider className={isDarkMode ? 'bg-gray-700' : 'bg-blue-200'}/>
               {isAuthenticated ? (
                 <MenuItem 
                   onClick={() => { handleClose(); logout(); }}
                   className={`${isDarkMode ? 'text-fuchsia-400' : 'text-fuchsia-800'} 
                     hover:bg-blue-200/20`}
                 >
-                  Logout
+                  <Logout className="mr-1" />Logout
                 </MenuItem>
               ) : (
                 <MenuItem 
-                  onClick={handleClose}
+                  onClick={() => { handleClose(); window.location.href = '/login'; }}
                   className="hover:bg-blue-200/20"
                 >
                   <Link 
                     href="/login" 
-                    className={`${isDarkMode ? 'text-fuchsia-400 hover:text-fuchsia-300' : 'text-fuchsia-800 hover:text-fuchsia-600'}`}
+                    className={`${isDarkMode ? 'text-fuchsia-400' : 'text-fuchsia-800'}`}
                   >
-                    Login
+                    <Login className="mr-1" />Login
                   </Link>
                 </MenuItem>
               )}
