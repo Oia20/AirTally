@@ -17,13 +17,13 @@ const initialFolders: FolderProps[] = [
     title: "Welcome!",
     counters: [
       {
-        id: uuidv4(), name: "Welcome to AirTally", incrementBy: 1, count: 0, initialValue: 0,
+        id: uuidv4(), name: "Welcome to AirTally", incrementBy: 1, count: 0, initialValue: 0, step: 1,
         onDelete: function (): void {
           throw new Error("Function not implemented.");
         }
       },
       {
-        id: uuidv4(), name: "Sign in to persist your counters", incrementBy: 12, count: 55, initialValue: 0,
+        id: uuidv4(), name: "Sign in to persist your counters", incrementBy: 12, count: 55, initialValue: 0, step: 1,
         onDelete: function (): void {
           throw new Error("Function not implemented.");
         }
