@@ -165,19 +165,19 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
           />
         </div>
         <div className="flex gap-2">
-          {isFolderOpen && (
+          {isOpen && (
             <Tooltip title={folderViewMode === 'card' ? 'Compact View' : 'Card View'}>
               <IconButton
                 onClick={handleViewModeClick}
-              size="small"
-              sx={{
-                color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
-                '&:hover': {
-                  backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
-                }
-              }}
-            >
-              {folderViewMode === 'card' ? <ViewListIcon /> : <ViewModuleIcon />}
+                size="small"
+                sx={{
+                  color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
+                  '&:hover': {
+                    backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+                  }
+                }}
+              >
+                {folderViewMode === 'card' ? <ViewListIcon /> : <ViewModuleIcon />}
               </IconButton>
             </Tooltip>
           )}
