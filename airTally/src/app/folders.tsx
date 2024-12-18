@@ -17,6 +17,7 @@ const initialFolders: FolderProps[] = [
   {
     id: uuidv4(),
     title: "Welcome!",
+    isFolderOpen: false,
     counters: [
       {
         id: uuidv4(), name: "Welcome to AirTally", incrementBy: 1, count: 0, initialValue: 0, step: 1,
@@ -81,6 +82,7 @@ const Folders = () => {
 
           return {
             ...folder,
+            isFolderOpen: folder.isOpen,
             counters: countersWithDelete,
             onDelete: () => {},
             onAddCounter: () => {},
@@ -109,6 +111,7 @@ const Folders = () => {
               {
                 id: data.id,
                 title: newFolderTitle,
+                isFolderOpen: false,
                 counters: [],
                 onDelete: function (): void {
                   throw new Error("Function not implemented.");
@@ -127,7 +130,7 @@ const Folders = () => {
       } else {
         setFolders([
           ...folders,
-          { id: uuidv4(), title: newFolderTitle, counters: [], onDelete: () => {}, onAddCounter: () => {}, onDeleteCounter: () => {} }
+          { id: uuidv4(), title: newFolderTitle, isFolderOpen: false, counters: [], onDelete: () => {}, onAddCounter: () => {}, onDeleteCounter: () => {} }
         ]);
         setShowFolderLoading(false);
       }

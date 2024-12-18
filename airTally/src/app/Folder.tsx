@@ -24,10 +24,10 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 
-const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }: FolderProps) => {
+const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, isFolderOpen }: FolderProps) => {
   const { isDarkMode } = useTheme();
   const { isAuthenticated } = useAuth();
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(isFolderOpen);
   const [isAddingCounter, setIsAddingCounter] = useState(false);
   const [newCounterName, setNewCounterName] = useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -60,6 +60,29 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
     };
     fetchFolderViewMode();
   }, [id, isAuthenticated]);
+
+
+  const handleOpenCloseFolder = async () => {
+    const newIsOpen = !isOpen;
+    setIsOpen(newIsOpen);
+    
+    if (isAuthenticated) {
+      try {
+        await fetch('/api/folders/openClose', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            id: id,
+            isOpen: newIsOpen 
+          })
+        });
+      } catch (error) {
+        console.error('Error updating folder open state:', error);
+        // Revert state if update fails
+        setIsOpen(!newIsOpen);
+      }
+    }
+  };
 
   const handleViewModeChange = async (mode: 'card' | 'compact') => {
     setFolderViewMode(mode);
@@ -126,7 +149,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
       <div className="flex justify-between items-center">
         <div
           className="flex items-center cursor-pointer group"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={handleOpenCloseFolder}
         >
           <h2 className={`text-xl font-medium ${
             isDarkMode ? 'text-gray-100' : 'text-gray-900'
@@ -142,7 +165,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
           />
         </div>
         <div className="flex gap-2">
-          {isOpen && (
+          {isFolderOpen && (
             <Tooltip title={folderViewMode === 'card' ? 'Compact View' : 'Card View'}>
               <IconButton
                 onClick={handleViewModeClick}

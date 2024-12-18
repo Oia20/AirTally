@@ -3,7 +3,6 @@ import { prisma } from "../../../lib/prisma/prisma";
 
 export async function POST(req: Request) {
   const { id, count } = await req.json();
-  console.log(id, count, "sassasasasasas");
   const counter = await prisma.counters.findUnique({
     where: { id: id },
   });

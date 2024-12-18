@@ -13,7 +13,8 @@
   export interface FolderProps {
     id: string;
     title: string;
-    viewMode?: 'card' | 'compact';
+    isFolderOpen: boolean;
+    isOpen?: boolean;
     counters: CounterProps[];
     onDelete: (id: string) => void;
     onAddCounter: (folderId: string, counter: Omit<CounterProps, 'onDelete'>) => void;
