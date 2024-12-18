@@ -4,11 +4,13 @@ import jwt from 'jsonwebtoken';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isLoading: boolean;
   token: string | null;
   userId: string | null;
   setUserId: (userId: string | null) => void;
   login: (token: string, refreshToken: string) => void;
   logout: () => void;
+  setIsLoading: (isLoading: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,6 +20,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const storedToken = localStorage.getItem('AT_JWT');
@@ -98,7 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, token, userId, setUserId, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, token, userId, setUserId, login, logout, isLoading, setIsLoading }}>
       {children}
     </AuthContext.Provider>
   );

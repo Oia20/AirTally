@@ -50,7 +50,7 @@ const Folders = () => {
   const { isDarkMode } = useTheme();
   const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
   const [newFolderTitle, setNewFolderTitle] = useState("");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const {isLoading, setIsLoading} = useAuth();
   const [showFolderLoading, setShowFolderLoading] = useState<boolean>(false);
   const { setNewCounterLoading } = useContext(FolderContext);
 
