@@ -101,11 +101,15 @@ const Navbar = () => {
             >
               <MenuItem 
                 onClick={toggleTheme}
-                className={`${isDarkMode ? 'text-violet-400' : 'text-violet-500'} 
-                  hover:bg-blue-200/20`}
+                sx={{ 
+                  color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)', // violet-400 : violet-500
+                  '&:hover': {
+                    backgroundColor: 'rgba(191, 219, 254, 0.2)' // blue-200/20 equivalent
+                  }
+                }}
               >
                 {isDarkMode ? <Brightness7 className="mr-2" /> : <Brightness4 className="mr-2" />}
-                Theme: {isDarkMode ? 'Light' : 'Dark'}
+                Theme: {isDarkMode ? 'Dark' : 'Light'}
               </MenuItem>
               <Divider className={isDarkMode ? 'bg-gray-700' : 'bg-blue-200'} />
               <MenuItem 
@@ -113,10 +117,14 @@ const Navbar = () => {
                 href="https://github.com/Oia20/airtally"
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`${isDarkMode ? 'text-violet-400' : 'text-violet-500'} 
-                  hover:bg-blue-200/20`}
+                sx={{ 
+                  color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)', // violet-400 : violet-500
+                  '&:hover': {
+                    backgroundColor: 'rgba(191, 219, 254, 0.2)' // blue-200/20 equivalent
+                  }
+                }}
               >
-              <Star className="mr-1" />on GitHub
+                <Star className="mr-1" />on GitHub
               </MenuItem>
               <Divider className={isDarkMode ? 'bg-gray-700' : 'bg-blue-200'}/>
               {isAuthenticated ? (
