@@ -4,7 +4,7 @@ import MoreVertSharpIcon from '@mui/icons-material/MoreVertSharp';
 import { useTheme } from "./themeContext";
 
 // Define action types
-type ActionType = 'delete' | 'reset' | 'viewID' | 'setCounter';
+type ActionType = 'delete' | 'reset' | 'viewID' | 'setCounter' | 'setStep';
 
 interface SetCounterValueModalProps {
   open: boolean;
@@ -12,6 +12,65 @@ interface SetCounterValueModalProps {
   id: string;
   onSetValue: (id: string, value: number) => void;
 }
+
+interface SetStepValueModalProps {
+  open: boolean;
+  onClose: () => void;
+  id: string;
+  onSetStep: (id: string, step: number | null) => void;
+}
+
+const SetStepValueModal = ({ open, onClose, id, onSetStep }: SetStepValueModalProps) => {
+  const { isDarkMode } = useTheme();
+  const [value, setValue] = useState<string>('');
+  const [error, setError] = useState<string>('');
+
+  const handleSubmit = () => {
+    const numValue = Number(value);
+    onSetStep(id, numValue);
+    onClose();
+  };
+
+  return (
+    <Dialog 
+      open={open} 
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
+          color: isDarkMode ? 'rgb(243, 244, 246)' : 'rgb(17, 24, 39)'
+        }
+      }}
+    >
+      <DialogTitle>Set Step Value</DialogTitle>
+      <DialogContent>
+        <TextField
+          autoFocus
+          margin="dense"
+          label="New Step Value"
+          type="number"
+          fullWidth
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          error={!!error}
+          helperText={error}
+          sx={{
+            '& .MuiInputLabel-root': {
+              color: isDarkMode ? 'rgb(156, 163, 175)' : 'inherit'
+            },
+            '& .MuiInputBase-input': {
+              color: isDarkMode ? 'rgb(243, 244, 246)' : 'inherit'
+            }
+          }}
+        />
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleSubmit}>Set Value</Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
 
 const SetCounterValueModal = ({ open, onClose, id, onSetValue }: SetCounterValueModalProps) => {
   const { isDarkMode } = useTheme();
@@ -142,13 +201,15 @@ interface CounterMenuProps {
   id: string;
   onDelete: (id: string) => void;
   onSetValue: (id: string, value: number) => void;
+  onSetStep: (id: string, step: number | null) => void;
   compact?: boolean;
 }
 
-const CounterMenu = ({ id, onDelete, onSetValue, compact }: CounterMenuProps) => {
+const CounterMenu = ({ id, onDelete, onSetValue, onSetStep, compact }: CounterMenuProps) => {
   const { isDarkMode } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [setValueModalOpen, setSetValueModalOpen] = useState(false);
+  const [setStepModalOpen, setSetStepModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false); // Add state for delete modal
   const open = Boolean(anchorEl);
 
@@ -172,15 +233,14 @@ const CounterMenu = ({ id, onDelete, onSetValue, compact }: CounterMenuProps) =>
       case 'setCounter':
         setSetValueModalOpen(true);
         break;
+      case 'setStep':
+        setSetStepModalOpen(true);
+        break;
       default:
         throw new Error('Unhandled action type');
     }
   };
 
-  const handleConfirmDelete = () => {
-    onDelete(id);
-    setDeleteModalOpen(false);
-  };
 
   return (
     <div>
@@ -249,6 +309,17 @@ const CounterMenu = ({ id, onDelete, onSetValue, compact }: CounterMenuProps) =>
         >
           Set Counter Value
         </MenuItem>
+        <MenuItem 
+          onClick={() => handleAction('setStep')}
+          sx={{ 
+            color: isDarkMode ? 'rgb(243, 244, 246)' : 'inherit',
+            '&:hover': {
+              backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+            }
+          }}
+        >
+          Set Step Value
+        </MenuItem>
       </Menu>
       <SetCounterValueModal
         open={setValueModalOpen}
@@ -259,7 +330,13 @@ const CounterMenu = ({ id, onDelete, onSetValue, compact }: CounterMenuProps) =>
       <DeleteConfirmationModal
         open={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete}
+        onConfirm={() => onDelete(id)}
+      />
+      <SetStepValueModal
+        open={setStepModalOpen}
+        onClose={() => setSetStepModalOpen(false)}
+        id={id}
+        onSetStep={onSetStep}
       />
     </div>
   );

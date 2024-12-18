@@ -51,6 +51,13 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
     }
   };
 
+  const setStepValue = (id: string, step: number | null) => {
+    setStep(step);
+    if (isAuthenticated && step !== null) {
+      updateStep(id, step);
+    }
+  };
+
   const setCounterValue = async (id: string, value: number) => {
     setCount(value);
     if (isAuthenticated) {
@@ -152,7 +159,7 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
               <AddIcon fontSize="small" />
             </IconButton>
             
-            <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} compact />
+            <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} onSetStep={setStepValue} compact />
           </div>
         </div>
       </div>
@@ -171,7 +178,7 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
         }`}>
           {name}
         </h3>
-        <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} />
+        <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} onSetStep={setStepValue} />
       </div>
 
       <div className="flex justify-between items-center gap-3 sm:gap-4">
