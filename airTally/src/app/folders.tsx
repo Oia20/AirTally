@@ -17,7 +17,7 @@ const initialFolders: FolderProps[] = [
   {
     id: uuidv4(),
     title: "Welcome!",
-    isFolderOpen: false,
+    isFolderOpen: true,
     counters: [
       {
         id: uuidv4(), name: "Welcome to AirTally", incrementBy: 1, count: 0, initialValue: 0, step: 1,
