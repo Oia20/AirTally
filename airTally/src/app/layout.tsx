@@ -15,7 +15,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Counting Cafe",
+  title: "AirTally",
   description: "The web app for counting... Anything!",
 };
 
