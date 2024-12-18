@@ -142,9 +142,10 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
           />
         </div>
         <div className="flex gap-2">
-          <Tooltip title={folderViewMode === 'card' ? 'Compact View' : 'Card View'}>
-            <IconButton
-              onClick={handleViewModeClick}
+          {isOpen && (
+            <Tooltip title={folderViewMode === 'card' ? 'Compact View' : 'Card View'}>
+              <IconButton
+                onClick={handleViewModeClick}
               size="small"
               sx={{
                 color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)',
@@ -154,10 +155,12 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
               }}
             >
               {folderViewMode === 'card' ? <ViewListIcon /> : <ViewModuleIcon />}
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Add Counter">
-            <IconButton
+              </IconButton>
+            </Tooltip>
+          )}
+          {isOpen && (
+            <Tooltip title="Add Counter">
+              <IconButton
               onClick={(e) => {
                 e.stopPropagation();
                 setIsAddingCounter(true);
@@ -171,8 +174,9 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter }
               }}
             >
               <AddIcon />
-            </IconButton>
-          </Tooltip>
+              </IconButton>
+            </Tooltip>
+          )}
           <IconButton
             onClick={handleClick}
             size="small"
