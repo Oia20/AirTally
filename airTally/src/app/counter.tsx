@@ -22,7 +22,7 @@ import CounterMenu from "./counterMenu";
 const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'card' }: CounterProps) => {
   const { isDarkMode } = useTheme();
   const [count, setCount] = useState<number>(initialValue);
-  const [step, setStep] = useState<number>(incrementBy);
+  const [step, setStep] = useState<number | null>(incrementBy);
   const [openResetDialog, setOpenResetDialog] = useState(false);
   const { isAuthenticated } = useAuth();
 
@@ -40,9 +40,9 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
     }
   };
 
-  const updateStep = async (id: string, step: number) => {
+  const updateStep = async (id: string, step: number | null) => {
     setStep(step);
-    if (isAuthenticated) {
+    if (isAuthenticated && step !== null) {
       await fetch('/api/counters/updateStep', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,7 +74,7 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
   };
 
   const increment = useCallback(async (id: string) => {
-    const newCount = count + step;
+    const newCount = count + (step || 1);
     setCount(newCount);
     if (isAuthenticated) {
       try {
@@ -86,7 +86,7 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
   }, [count, step, isAuthenticated]);
 
   const decrement = useCallback(async (id: string) => {
-    const newCount = count - step;
+    const newCount = count - (step || 1);
     setCount(newCount);
     if (isAuthenticated) {
       try {
@@ -238,8 +238,11 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
           </span>
           <input
             type="number"
-            value={step}
-            onChange={(e) => updateStep(id, Math.max(1, Number(e.target.value)))}
+            value={step === null ? '' : step}
+            onChange={(e) => {
+              const value = e.target.value === '' ? null : Math.max(1, Number(e.target.value));
+              updateStep(id, value);
+            }}
             className={`w-16 px-2 py-1 border rounded-md text-center ${
               isDarkMode 
                 ? 'bg-gray-700 border-gray-600 text-gray-100' 
