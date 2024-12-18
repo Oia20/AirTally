@@ -20,6 +20,57 @@ interface SetStepValueModalProps {
   onSetStep: (id: string, step: number | null) => void;
 }
 
+interface ResetCounterModalProps {
+  open: boolean;
+  onClose: () => void;
+  id: string;
+  onReset: (id: string) => void;
+}
+
+const ResetCounterModal = ({ open, onClose, id, onReset }: ResetCounterModalProps) => {
+  const { isDarkMode } = useTheme();
+  return (
+    <Dialog 
+      open={open} 
+      onClose={onClose}
+      PaperProps={{
+        sx: {
+          backgroundColor: isDarkMode ? 'rgb(31, 41, 55)' : 'rgb(255, 255, 255)',
+          color: isDarkMode ? 'rgb(243, 244, 246)' : 'rgb(17, 24, 39)'
+        }
+      }}
+    >
+      <DialogTitle>Reset Counter</DialogTitle>
+      <DialogContent>
+        <p className={isDarkMode ? 'text-gray-300' : 'text-gray-600'}>
+          Are you sure you want to reset this counter?
+        </p>
+      </DialogContent>
+      <DialogActions>
+        <Button 
+          onClick={onClose}
+          sx={{
+            color: isDarkMode ? 'rgb(167, 139, 250)' : 'rgb(139, 92, 246)'
+          }}
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={() => {
+            onReset(id);
+            onClose();
+          }}
+          sx={{
+            color: isDarkMode ? 'rgb(248, 113, 113)' : 'rgb(239, 68, 68)'
+          }}
+        >
+          Reset
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+};
+
 const SetStepValueModal = ({ open, onClose, id, onSetStep }: SetStepValueModalProps) => {
   const { isDarkMode } = useTheme();
   const [value, setValue] = useState<string>('');
@@ -203,14 +254,16 @@ interface CounterMenuProps {
   onSetValue: (id: string, value: number) => void;
   onSetStep: (id: string, step: number | null) => void;
   compact?: boolean;
+  onReset: (id: string) => void;
 }
 
-const CounterMenu = ({ id, onDelete, onSetValue, onSetStep, compact }: CounterMenuProps) => {
+const CounterMenu = ({ id, onDelete, onSetValue, onSetStep, compact, onReset }: CounterMenuProps) => {
   const { isDarkMode } = useTheme();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [setValueModalOpen, setSetValueModalOpen] = useState(false);
   const [setStepModalOpen, setSetStepModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false); // Add state for delete modal
+  const [resetModalOpen, setResetModalOpen] = useState(false); // Add state for reset modal
   const open = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -235,6 +288,9 @@ const CounterMenu = ({ id, onDelete, onSetValue, onSetStep, compact }: CounterMe
         break;
       case 'setStep':
         setSetStepModalOpen(true);
+        break;
+      case 'reset':
+        setResetModalOpen(true);
         break;
       default:
         throw new Error('Unhandled action type');
@@ -310,6 +366,17 @@ const CounterMenu = ({ id, onDelete, onSetValue, onSetStep, compact }: CounterMe
           Set Counter Value
         </MenuItem>
         <MenuItem 
+          onClick={() => handleAction('reset')}
+          sx={{ 
+            color: isDarkMode ? 'rgb(243, 244, 246)' : 'inherit',
+            '&:hover': {
+              backgroundColor: isDarkMode ? 'rgba(167, 139, 250, 0.1)' : 'rgba(139, 92, 246, 0.1)'
+            }
+          }}
+        >
+          Reset Counter
+        </MenuItem>
+        <MenuItem 
           onClick={() => handleAction('setStep')}
           sx={{ 
             color: isDarkMode ? 'rgb(243, 244, 246)' : 'inherit',
@@ -337,6 +404,12 @@ const CounterMenu = ({ id, onDelete, onSetValue, onSetStep, compact }: CounterMe
         onClose={() => setSetStepModalOpen(false)}
         id={id}
         onSetStep={onSetStep}
+      />
+      <ResetCounterModal
+        open={resetModalOpen}
+        onClose={() => setResetModalOpen(false)}
+        id={id}
+        onReset={onReset}
       />
     </div>
   );

@@ -105,8 +105,8 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
   }, [count, step, isAuthenticated]);
 
   const reset = async () => {
+    setCount(0);
     if (isAuthenticated) {
-      setCount(0);
       await fetch('/api/counters/resetCounter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -159,7 +159,7 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
               <AddIcon fontSize="small" />
             </IconButton>
             
-            <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} onSetStep={setStepValue} compact />
+            <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} onSetStep={setStepValue} compact onReset={reset} />
           </div>
         </div>
       </div>
@@ -178,7 +178,7 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
         }`}>
           {name}
         </h3>
-        <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} onSetStep={setStepValue} />
+        <CounterMenu id={id} onDelete={deleteCounter} onSetValue={setCounterValue} onSetStep={setStepValue} onReset={reset} />
       </div>
 
       <div className="flex justify-between items-center gap-3 sm:gap-4">
