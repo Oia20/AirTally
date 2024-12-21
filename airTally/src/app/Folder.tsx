@@ -37,6 +37,23 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
   const { viewMode, setViewMode } = useContext(FolderContext);
   const [folderViewMode, setFolderViewMode] = useState<'card' | 'compact'>('card');
   
+  // Load folder open state from localStorage on mount
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const savedState = localStorage.getItem(`folder_state_${id}`);
+      if (savedState !== null) {
+        setIsOpen(JSON.parse(savedState));
+      }
+    }
+  }, [id, isAuthenticated]);
+
+  // Save folder open state to localStorage when it changes
+  useEffect(() => {
+    if (!isAuthenticated) {
+      localStorage.setItem(`folder_state_${id}`, JSON.stringify(isOpen));
+    }
+  }, [isOpen, id, isAuthenticated]);
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -139,6 +156,15 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
       inputRef.current.focus();
     }
   }, [isAddingCounter]);
+
+  // Add cleanup when folder is deleted
+  useEffect(() => {
+    return () => {
+      if (!isAuthenticated) {
+        localStorage.removeItem(`folder_state_${id}`);
+      }
+    };
+  }, [id, isAuthenticated]);
 
   return (
     <div className={`${

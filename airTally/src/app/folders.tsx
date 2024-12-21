@@ -45,6 +45,8 @@ const initialFolders: FolderProps[] = [
 }
 ];
 
+const LOCAL_STORAGE_KEY = 'airtally_local_folders';
+
 const Folders = () => {
   const { isAuthenticated, userId } = useAuth();
   const { isAddingFolder, setIsAddingFolder } = useContext(FolderContext);
@@ -59,7 +61,8 @@ const Folders = () => {
     if (isAuthenticated) {
       fetchFolders();
     } else {
-      setFolders(initialFolders);
+      const storedFolders = localStorage.getItem(LOCAL_STORAGE_KEY);
+      setFolders(storedFolders ? JSON.parse(storedFolders) : initialFolders);
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -95,11 +98,28 @@ const Folders = () => {
     }
   }, [ isAuthenticated ]);
 
+  useEffect(() => {
+    if (!isAuthenticated && folders !== initialFolders) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(folders));
+    }
+  }, [folders, isAuthenticated]);
+
   const addFolder = async () => {
     if (newFolderTitle.trim()) {
       setShowFolderLoading(true);
       setNewFolderTitle("");
       setIsAddingFolder(false);
+
+      const newFolder = {
+        id: uuidv4(),
+        title: newFolderTitle,
+        isFolderOpen: false,
+        counters: [],
+        onDelete: () => {},
+        onAddCounter: () => {},
+        onDeleteCounter: () => {}
+      };
+
       if (isAuthenticated) {
         await fetch("/api/folders/addFolder", {
           method: "POST",
@@ -128,12 +148,9 @@ const Folders = () => {
           });
         });
       } else {
-        setFolders([
-          ...folders,
-          { id: uuidv4(), title: newFolderTitle, isFolderOpen: false, counters: [], onDelete: () => {}, onAddCounter: () => {}, onDeleteCounter: () => {} }
-        ]);
-        setShowFolderLoading(false);
+        setFolders([...folders, newFolder]);
       }
+      setShowFolderLoading(false);
     }
   };
 
@@ -171,7 +188,13 @@ const Folders = () => {
       setFolders(
         folders.map((folder) =>
           folder.id === folderId
-            ? { ...folder, counters: [...folder.counters, { ...counter, id: uuidv4(), onDelete: () => {} } as CounterProps] }
+            ? {
+                ...folder,
+                counters: [
+                  ...folder.counters,
+                  { ...counter, id: uuidv4(), onDelete: () => {} } as CounterProps
+                ]
+              }
             : folder
         )
       );

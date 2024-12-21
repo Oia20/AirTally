@@ -1,7 +1,7 @@
 // counter.tsx
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { CounterProps } from "./types";
 import { useAuth } from "./authContext";
 import { useTheme } from "./themeContext";
@@ -26,6 +26,34 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
   const [openResetDialog, setOpenResetDialog] = useState(false);
   const { isAuthenticated } = useAuth();
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      const savedData = localStorage.getItem(`counter_${id}`);
+      if (savedData) {
+        const { count: savedCount, step: savedStep } = JSON.parse(savedData);
+        setCount(savedCount ?? initialValue);
+        setStep(savedStep ?? incrementBy);
+      }
+    }
+  }, [id, isAuthenticated, initialValue, incrementBy]);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      localStorage.setItem(`counter_${id}`, JSON.stringify({
+        count,
+        step
+      }));
+    }
+  }, [count, step, id, isAuthenticated]);
+
+  useEffect(() => {
+    return () => {
+      if (!isAuthenticated) {
+        localStorage.removeItem(`counter_${id}`);
+      }
+    };
+  }, [id, isAuthenticated]);
+
   const handleOpenResetDialog = () => setOpenResetDialog(true);
   const handleCloseResetDialog = () => setOpenResetDialog(false);
 
@@ -37,6 +65,8 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
       });
+    } else {
+      localStorage.removeItem(`counter_${id}`);
     }
   };
 
