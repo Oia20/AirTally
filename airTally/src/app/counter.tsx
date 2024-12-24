@@ -51,13 +51,15 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
         localStorage.setItem(storageKey, JSON.stringify({
           id,
           count,
-          step
+          step,
+          name,
+          incrementBy
         }));
       } catch (error) {
         console.error('Error saving counter data:', error);
       }
     }
-  }, [count, step, id, isAuthenticated]);
+  }, [count, step, id, isAuthenticated, name, incrementBy]);
 
   useEffect(() => {
     return () => {

@@ -228,14 +228,26 @@ const Folders = () => {
       const storedFolders = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (storedFolders) {
         const parsed = JSON.parse(storedFolders);
-        // Ensure all counters have their original IDs
-        return parsed.map((folder: FolderProps) => ({
-          ...folder,
-          counters: folder.counters.map(counter => ({
-            ...counter,
-            id: counter.id // Preserve the original ID
-          }))
-        }));
+        // Load folder states and merge with stored folders
+        return parsed.map((folder: FolderProps) => {
+          const folderState = localStorage.getItem(`folder_state_${folder.id}`);
+          return {
+            ...folder,
+            isFolderOpen: folderState ? JSON.parse(folderState) : false,
+            counters: folder.counters.map(counter => {
+              const counterData = localStorage.getItem(`counter_${counter.id}`);
+              if (counterData) {
+                const parsed = JSON.parse(counterData);
+                return {
+                  ...counter,
+                  count: parsed.count,
+                  step: parsed.step
+                };
+              }
+              return counter;
+            })
+          };
+        });
       }
       return initialFolders;
     } catch (error) {
