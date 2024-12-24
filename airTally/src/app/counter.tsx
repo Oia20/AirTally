@@ -61,14 +61,6 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
     }
   }, [count, step, id, isAuthenticated, name, incrementBy]);
 
-  useEffect(() => {
-    return () => {
-      if (!isAuthenticated) {
-        localStorage.removeItem(`counter_${id}`);
-      }
-    };
-  }, [id, isAuthenticated]);
-
   const handleOpenResetDialog = () => setOpenResetDialog(true);
   const handleCloseResetDialog = () => setOpenResetDialog(false);
 
