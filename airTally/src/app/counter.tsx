@@ -28,21 +28,34 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
 
   useEffect(() => {
     if (!isAuthenticated) {
-      const savedData = localStorage.getItem(`counter_${id}`);
-      if (savedData) {
-        const { count: savedCount, step: savedStep } = JSON.parse(savedData);
-        setCount(savedCount ?? initialValue);
-        setStep(savedStep ?? incrementBy);
+      try {
+        const storageKey = `counter_${id}`;
+        const savedData = localStorage.getItem(storageKey);
+        if (savedData) {
+          const parsed = JSON.parse(savedData);
+          setCount(parsed.count ?? initialValue);
+          setStep(parsed.step ?? incrementBy);
+        }
+      } catch (error) {
+        console.error('Error loading counter data:', error);
+        setCount(initialValue);
+        setStep(incrementBy);
       }
     }
   }, [id, isAuthenticated, initialValue, incrementBy]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      localStorage.setItem(`counter_${id}`, JSON.stringify({
-        count,
-        step
-      }));
+      try {
+        const storageKey = `counter_${id}`;
+        localStorage.setItem(storageKey, JSON.stringify({
+          id,
+          count,
+          step
+        }));
+      } catch (error) {
+        console.error('Error saving counter data:', error);
+      }
     }
   }, [count, step, id, isAuthenticated]);
 

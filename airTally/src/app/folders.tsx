@@ -168,13 +168,14 @@ const Folders = () => {
 
   const addCounter = async (folderId: string, counter: Omit<CounterProps, 'onDelete'>) => {
     setNewCounterLoading(true);
+    const counterId = counter.id;
+
     if (isAuthenticated) {
       await fetch("/api/counters/addCounter", {
         method: "POST",
         body: JSON.stringify({ folderId: folderId, name: counter.name, increment: counter.incrementBy, initial: counter.initialValue }),
       }).then((response) => {
         response.json().then((data) => {
-          console.log(data);
           setFolders(
             folders.map((folder) =>
               folder.id === folderId
@@ -192,7 +193,7 @@ const Folders = () => {
                 ...folder,
                 counters: [
                   ...folder.counters,
-                  { ...counter, id: uuidv4(), onDelete: () => {} } as CounterProps
+                  { ...counter, id: counterId, onDelete: () => {} } as CounterProps
                 ]
               }
             : folder
@@ -213,6 +214,27 @@ const Folders = () => {
           : folder
       )
     );
+  };
+
+  const safelyLoadFromLocalStorage = () => {
+    try {
+      const storedFolders = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (storedFolders) {
+        const parsed = JSON.parse(storedFolders);
+        // Ensure all counters have their original IDs
+        return parsed.map((folder: FolderProps) => ({
+          ...folder,
+          counters: folder.counters.map(counter => ({
+            ...counter,
+            id: counter.id // Preserve the original ID
+          }))
+        }));
+      }
+      return initialFolders;
+    } catch (error) {
+      console.error('Error loading folders from localStorage:', error);
+      return initialFolders;
+    }
   };
 
   return (
