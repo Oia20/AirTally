@@ -15,24 +15,33 @@ import { useTheme } from "./themeContext";
 
 const initialFolders: FolderProps[] = [
   {
-    id: uuidv4(),
+    id: "welcome-folder",
     title: "Welcome!",
     isFolderOpen: true,
     counters: [
       {
-        id: uuidv4(), name: "Welcome to AirTally", incrementBy: 1, count: 0, initialValue: 0, step: 1,
+        id: "welcome-counter-1",
+        name: "Welcome to AirTally",
+        incrementBy: 1,
+        count: 0,
+        initialValue: 0,
+        step: 1,
         onDelete: function (): void {
           throw new Error("Function not implemented.");
         }
       },
       {
-        id: uuidv4(), name: "Sign in to persist your counters", incrementBy: 12, count: 55, initialValue: 0, step: 1,
+        id: "welcome-counter-2",
+        name: "Sign in to persist your counters",
+        incrementBy: 12,
+        count: 55,
+        initialValue: 0,
+        step: 1,
         onDelete: function (): void {
           throw new Error("Function not implemented.");
         }
       }
-    ]
-    ,
+    ],
     onDelete: function (): void {
       throw new Error("Function not implemented.");
     },
@@ -42,7 +51,7 @@ const initialFolders: FolderProps[] = [
     onDeleteCounter: function (): void {
       throw new Error("Function not implemented.");
     }
-}
+  }
 ];
 
 const LOCAL_STORAGE_KEY = 'airtally_local_folders';
@@ -51,36 +60,57 @@ const Folders = () => {
   const { isAuthenticated, userId } = useAuth();
   const { isAddingFolder, setIsAddingFolder } = useContext(FolderContext);
   const { isDarkMode } = useTheme();
-  const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
   const [newFolderTitle, setNewFolderTitle] = useState("");
   const {isLoading, setIsLoading} = useAuth();
   const [showFolderLoading, setShowFolderLoading] = useState<boolean>(false);
   const { setNewCounterLoading } = useContext(FolderContext);
 
+  // Initialize folders from localStorage or initialFolders
+  const getInitialFolders = () => {
+    if (typeof window === 'undefined') {
+      return initialFolders;
+    }
+
+    if (!isAuthenticated) {
+      const storedFolders = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (storedFolders) {
+        const parsedFolders = JSON.parse(storedFolders);
+        return parsedFolders.map((folder: FolderProps) => {
+          const savedState = localStorage.getItem(`folder_state_${folder.id}`);
+          const isOpen = savedState ? JSON.parse(savedState) : folder.isFolderOpen;
+          
+          return {
+            ...folder,
+            isFolderOpen: isOpen
+          };
+        });
+      }
+    }
+    return initialFolders;
+  };
+
+  const [folders, setFolders] = useState<FolderProps[]>(getInitialFolders());
+
+  // Single useEffect for handling authenticated vs non-authenticated state
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && userId) {
       fetchFolders();
     } else {
-      const storedFolders = localStorage.getItem(LOCAL_STORAGE_KEY);
-      setFolders(storedFolders ? JSON.parse(storedFolders) : initialFolders);
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
+      setIsLoading(false);
     }
+
     async function fetchFolders() {
       const response = await fetch(`/api/folders/getFolders/${userId}`);
       const foldersData = await response.json();
       
-      // Fetch counters for each folder
       const foldersWithCounters = await Promise.all(
         foldersData.map(async (folder: FolderProps) => {
           const countersResponse = await fetch(`/api/counters/getCounters/${folder.id}`);
           const countersData = await countersResponse.json();
           
-          // Map the counter data to include the onDelete function
           const countersWithDelete = countersData.map((counter: CounterProps) => ({
             ...counter,
-            onDelete: () => {} // Initialize with empty function
+            onDelete: () => {}
           }));
 
           return {
@@ -95,14 +125,31 @@ const Folders = () => {
       );
 
       setFolders(foldersWithCounters);
+      setIsLoading(false);
     }
-  }, [ isAuthenticated ]);
+  }, [isAuthenticated, userId]);
 
+  // Modify the localStorage effect to only save when not authenticated AND not transitioning from authenticated
   useEffect(() => {
     if (!isAuthenticated && folders !== initialFolders) {
+      // Don't save to localStorage when transitioning from authenticated to unauthenticated
+      const wasAuthenticated = localStorage.getItem('was_authenticated');
+      if (wasAuthenticated === 'true') {
+        localStorage.setItem('was_authenticated', 'false');
+        setFolders(getInitialFolders()); // Reset to local storage state
+        return;
+      }
+      
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(folders));
     }
   }, [folders, isAuthenticated]);
+
+  // Track authentication state changes
+  useEffect(() => {
+    if (isAuthenticated) {
+      localStorage.setItem('was_authenticated', 'true');
+    }
+  }, [isAuthenticated]);
 
   const addFolder = async () => {
     if (newFolderTitle.trim()) {
@@ -155,7 +202,24 @@ const Folders = () => {
   };
 
   const deleteFolder = async (folderId: string) => {
+    // Remove folder and its counters from localStorage if not authenticated
+    if (!isAuthenticated) {
+      // Remove folder state
+      localStorage.removeItem(`folder_state_${folderId}`);
+      
+      // Get the folder's counters and remove their data
+      const folder = folders.find(f => f.id === folderId);
+      if (folder) {
+        folder.counters.forEach(counter => {
+          localStorage.removeItem(`counter_${counter.id}`);
+        });
+      }
+    }
+
+    // Remove folder from state
     setFolders(folders.filter((folder) => folder.id !== folderId));
+
+    // Handle authenticated deletion
     if (isAuthenticated) {
       console.log("Deleting folder:", folderId);
       console.log("User ID:", userId);
@@ -203,6 +267,12 @@ const Folders = () => {
   };
 
   const deleteCounter = (folderId: string, counterId: string) => {
+    // Remove counter from localStorage if not authenticated
+    if (!isAuthenticated) {
+      localStorage.removeItem(`counter_${counterId}`);
+    }
+
+    // Update folders state
     setFolders(
       folders.map((folder) =>
         folder.id === folderId

@@ -21,38 +21,46 @@ import CounterMenu from "./counterMenu";
 
 const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'card' }: CounterProps) => {
   const { isDarkMode } = useTheme();
-  const [count, setCount] = useState<number>(initialValue);
-  const [step, setStep] = useState<number | null>(incrementBy);
-  const [openResetDialog, setOpenResetDialog] = useState(false);
   const { isAuthenticated } = useAuth();
-
-  useEffect(() => {
+  
+  // Initialize state from localStorage first, fall back to initialValue
+  const getInitialState = () => {
     if (!isAuthenticated) {
       const savedData = localStorage.getItem(`counter_${id}`);
       if (savedData) {
         const { count: savedCount, step: savedStep } = JSON.parse(savedData);
-        setCount(savedCount ?? initialValue);
-        setStep(savedStep ?? incrementBy);
+        return {
+          count: savedCount ?? initialValue,
+          step: savedStep ?? incrementBy
+        };
       }
     }
-  }, [id, isAuthenticated, initialValue, incrementBy]);
+    return {
+      count: initialValue,
+      step: incrementBy
+    };
+  };
 
+  const initialState = getInitialState();
+  const [count, setCount] = useState<number>(initialState.count);
+  const [step, setStep] = useState<number | null>(initialState.step);
+  const [openResetDialog, setOpenResetDialog] = useState(false);
+
+  // Save counter state to localStorage when count or step changes
   useEffect(() => {
     if (!isAuthenticated) {
+      // Don't save to localStorage when transitioning from authenticated to unauthenticated
+      const wasAuthenticated = localStorage.getItem('was_authenticated');
+      if (wasAuthenticated === 'true') {
+        return;
+      }
+      
       localStorage.setItem(`counter_${id}`, JSON.stringify({
         count,
         step
       }));
     }
   }, [count, step, id, isAuthenticated]);
-
-  useEffect(() => {
-    return () => {
-      if (!isAuthenticated) {
-        localStorage.removeItem(`counter_${id}`);
-      }
-    };
-  }, [id, isAuthenticated]);
 
   const handleOpenResetDialog = () => setOpenResetDialog(true);
   const handleCloseResetDialog = () => setOpenResetDialog(false);

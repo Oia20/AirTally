@@ -28,6 +28,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
   const { isDarkMode } = useTheme();
   const { isAuthenticated } = useAuth();
   const [isOpen, setIsOpen] = useState<boolean>(isFolderOpen);
+  const [folderCounters, setFolderCounters] = useState(counters);
   const [isAddingCounter, setIsAddingCounter] = useState(false);
   const [newCounterName, setNewCounterName] = useState("");
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -37,15 +38,32 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
   const { viewMode, setViewMode } = useContext(FolderContext);
   const [folderViewMode, setFolderViewMode] = useState<'card' | 'compact'>('card');
   
-  // Load folder open state from localStorage on mount
+  // Load folder state from localStorage on mount
   useEffect(() => {
     if (!isAuthenticated) {
+      // Load folder open state
       const savedState = localStorage.getItem(`folder_state_${id}`);
       if (savedState !== null) {
         setIsOpen(JSON.parse(savedState));
       }
+
+      // Load counter states
+      const updatedCounters = counters.map(counter => {
+        const savedData = localStorage.getItem(`counter_${counter.id}`);
+        if (savedData) {
+          const { count, step } = JSON.parse(savedData);
+          return {
+            ...counter,
+            count: count ?? counter.count,
+            step: step ?? counter.step,
+            initialValue: count ?? counter.initialValue
+          };
+        }
+        return counter;
+      });
+      setFolderCounters(updatedCounters);
     }
-  }, [id, isAuthenticated]);
+  }, [id, isAuthenticated, counters]);
 
   // Save folder open state to localStorage when it changes
   useEffect(() => {
@@ -95,7 +113,6 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
         });
       } catch (error) {
         console.error('Error updating folder open state:', error);
-        // Revert state if update fails
         setIsOpen(!newIsOpen);
       }
     }
@@ -157,14 +174,17 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
     }
   }, [isAddingCounter]);
 
-  // Add cleanup when folder is deleted
-  useEffect(() => {
-    return () => {
-      if (!isAuthenticated) {
-        localStorage.removeItem(`folder_state_${id}`);
-      }
-    };
-  }, [id, isAuthenticated]);
+  // Instead, add cleanup only when deleting the folder
+  const handleDeleteFolder = () => {
+    if (!isAuthenticated) {
+      localStorage.removeItem(`folder_state_${id}`);
+      folderCounters.forEach(counter => {
+        localStorage.removeItem(`counter_${counter.id}`);
+      });
+    }
+    onDelete(id);
+    handleCloseDeleteDialog();
+  };
 
   return (
     <div className={`${
@@ -322,7 +342,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
               ? 'grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6' 
               : 'space-y-2'
           }`}>
-            {counters.map((counter) => (
+            {folderCounters.map((counter) => (
               <Counter
                 key={counter.id}
                 {...counter}
@@ -371,10 +391,7 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
             Cancel
           </Button>
           <Button 
-            onClick={() => {
-              onDelete(id);
-              handleCloseDeleteDialog();
-            }}
+            onClick={handleDeleteFolder}
             sx={{
               color: isDarkMode ? 'rgb(248, 113, 113)' : 'rgb(239, 68, 68)'
             }}
