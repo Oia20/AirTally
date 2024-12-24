@@ -51,42 +51,56 @@ const Folders = () => {
   const { isAuthenticated, userId } = useAuth();
   const { isAddingFolder, setIsAddingFolder } = useContext(FolderContext);
   const { isDarkMode } = useTheme();
-  const [folders, setFolders] = useState<FolderProps[]>([]);
+  const [folders, setFolders] = useState<FolderProps[]>(initialFolders);
   const [newFolderTitle, setNewFolderTitle] = useState("");
   const {isLoading, setIsLoading} = useAuth();
   const [showFolderLoading, setShowFolderLoading] = useState<boolean>(false);
   const { setNewCounterLoading } = useContext(FolderContext);
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      try {
-        const storedFolders = localStorage.getItem(LOCAL_STORAGE_KEY);
-        console.log('Stored folders:', storedFolders);
-        if (storedFolders) {
-          const parsedFolders = JSON.parse(storedFolders);
-          console.log('Parsed folders:', parsedFolders);
-          setFolders(parsedFolders);
-        } else {
-          console.log('No stored folders, using initial folders');
-          setFolders(initialFolders);
-        }
-      } catch (error) {
-        console.error('Error loading from localStorage:', error);
-        setFolders(initialFolders);
-      }
+    if (isAuthenticated) {
+      fetchFolders();
+    } else {
+      const storedFolders = localStorage.getItem(LOCAL_STORAGE_KEY);
+      setFolders(storedFolders ? JSON.parse(storedFolders) : initialFolders);
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
     }
-  }, [isAuthenticated]);
+    async function fetchFolders() {
+      const response = await fetch(`/api/folders/getFolders/${userId}`);
+      const foldersData = await response.json();
+      
+      // Fetch counters for each folder
+      const foldersWithCounters = await Promise.all(
+        foldersData.map(async (folder: FolderProps) => {
+          const countersResponse = await fetch(`/api/counters/getCounters/${folder.id}`);
+          const countersData = await countersResponse.json();
+          
+          // Map the counter data to include the onDelete function
+          const countersWithDelete = countersData.map((counter: CounterProps) => ({
+            ...counter,
+            onDelete: () => {} // Initialize with empty function
+          }));
+
+          return {
+            ...folder,
+            isFolderOpen: folder.isOpen,
+            counters: countersWithDelete,
+            onDelete: () => {},
+            onAddCounter: () => {},
+            onDeleteCounter: () => {}
+          };
+        })
+      );
+
+      setFolders(foldersWithCounters);
+    }
+  }, [ isAuthenticated ]);
 
   useEffect(() => {
-    if (!isAuthenticated && folders.length > 0) {
-      try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(folders));
-      } catch (error) {
-        console.error('Error saving to localStorage:', error);
-      }
+    if (!isAuthenticated && folders !== initialFolders) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(folders));
     }
   }, [folders, isAuthenticated]);
 
@@ -134,22 +148,14 @@ const Folders = () => {
           });
         });
       } else {
-        const updatedFolders = [...folders, newFolder];
-        setFolders(updatedFolders);
-        try {
-          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedFolders));
-        } catch (error) {
-          console.error('Error saving new folder to localStorage:', error);
-        }
+        setFolders([...folders, newFolder]);
       }
       setShowFolderLoading(false);
     }
   };
 
   const deleteFolder = async (folderId: string) => {
-    const updatedFolders = folders.filter((folder) => folder.id !== folderId);
-    setFolders(updatedFolders);
-    
+    setFolders(folders.filter((folder) => folder.id !== folderId));
     if (isAuthenticated) {
       console.log("Deleting folder:", folderId);
       console.log("User ID:", userId);
@@ -157,32 +163,18 @@ const Folders = () => {
         method: "DELETE",
         body: JSON.stringify({ folderId: folderId, userId: userId }),
       });
-    } else {
-      try {
-        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updatedFolders));
-        // Also clean up any counter-specific localStorage items
-        folders
-          .find(f => f.id === folderId)
-          ?.counters
-          .forEach(counter => {
-            localStorage.removeItem(`counter_${counter.id}`);
-          });
-      } catch (error) {
-        console.error('Error updating localStorage after folder deletion:', error);
-      }
     }
   };
 
   const addCounter = async (folderId: string, counter: Omit<CounterProps, 'onDelete'>) => {
     setNewCounterLoading(true);
-    const counterId = counter.id;
-
     if (isAuthenticated) {
       await fetch("/api/counters/addCounter", {
         method: "POST",
         body: JSON.stringify({ folderId: folderId, name: counter.name, increment: counter.incrementBy, initial: counter.initialValue }),
       }).then((response) => {
         response.json().then((data) => {
+          console.log(data);
           setFolders(
             folders.map((folder) =>
               folder.id === folderId
@@ -200,7 +192,7 @@ const Folders = () => {
                 ...folder,
                 counters: [
                   ...folder.counters,
-                  { ...counter, id: counterId, onDelete: () => {} } as CounterProps
+                  { ...counter, id: uuidv4(), onDelete: () => {} } as CounterProps
                 ]
               }
             : folder
@@ -221,39 +213,6 @@ const Folders = () => {
           : folder
       )
     );
-  };
-
-  const safelyLoadFromLocalStorage = () => {
-    try {
-      const storedFolders = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (storedFolders) {
-        const parsed = JSON.parse(storedFolders);
-        // Load folder states and merge with stored folders
-        return parsed.map((folder: FolderProps) => {
-          const folderState = localStorage.getItem(`folder_state_${folder.id}`);
-          return {
-            ...folder,
-            isFolderOpen: folderState ? JSON.parse(folderState) : false,
-            counters: folder.counters.map(counter => {
-              const counterData = localStorage.getItem(`counter_${counter.id}`);
-              if (counterData) {
-                const parsed = JSON.parse(counterData);
-                return {
-                  ...counter,
-                  count: parsed.count,
-                  step: parsed.step
-                };
-              }
-              return counter;
-            })
-          };
-        });
-      }
-      return initialFolders;
-    } catch (error) {
-      console.error('Error loading folders from localStorage:', error);
-      return initialFolders;
-    }
   };
 
   return (

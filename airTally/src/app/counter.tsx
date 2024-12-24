@@ -28,38 +28,31 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
 
   useEffect(() => {
     if (!isAuthenticated) {
-      try {
-        const storageKey = `counter_${id}`;
-        const savedData = localStorage.getItem(storageKey);
-        if (savedData) {
-          const parsed = JSON.parse(savedData);
-          setCount(parsed.count ?? initialValue);
-          setStep(parsed.step ?? incrementBy);
-        }
-      } catch (error) {
-        console.error('Error loading counter data:', error);
-        setCount(initialValue);
-        setStep(incrementBy);
+      const savedData = localStorage.getItem(`counter_${id}`);
+      if (savedData) {
+        const { count: savedCount, step: savedStep } = JSON.parse(savedData);
+        setCount(savedCount ?? initialValue);
+        setStep(savedStep ?? incrementBy);
       }
     }
   }, [id, isAuthenticated, initialValue, incrementBy]);
 
   useEffect(() => {
     if (!isAuthenticated) {
-      try {
-        const storageKey = `counter_${id}`;
-        localStorage.setItem(storageKey, JSON.stringify({
-          id,
-          count,
-          step,
-          name,
-          incrementBy
-        }));
-      } catch (error) {
-        console.error('Error saving counter data:', error);
-      }
+      localStorage.setItem(`counter_${id}`, JSON.stringify({
+        count,
+        step
+      }));
     }
-  }, [count, step, id, isAuthenticated, name, incrementBy]);
+  }, [count, step, id, isAuthenticated]);
+
+  useEffect(() => {
+    return () => {
+      if (!isAuthenticated) {
+        localStorage.removeItem(`counter_${id}`);
+      }
+    };
+  }, [id, isAuthenticated]);
 
   const handleOpenResetDialog = () => setOpenResetDialog(true);
   const handleCloseResetDialog = () => setOpenResetDialog(false);

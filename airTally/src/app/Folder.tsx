@@ -37,39 +37,22 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
   const { viewMode, setViewMode } = useContext(FolderContext);
   const [folderViewMode, setFolderViewMode] = useState<'card' | 'compact'>('card');
   
-  // Load folder state on mount
+  // Load folder open state from localStorage on mount
   useEffect(() => {
     if (!isAuthenticated) {
-      try {
-        const savedState = localStorage.getItem(`folder_state_${id}`);
-        if (savedState !== null) {
-          setIsOpen(JSON.parse(savedState));
-        }
-      } catch (error) {
-        console.error('Error loading folder state:', error);
+      const savedState = localStorage.getItem(`folder_state_${id}`);
+      if (savedState !== null) {
+        setIsOpen(JSON.parse(savedState));
       }
     }
   }, [id, isAuthenticated]);
 
-  // Save folder state when it changes
+  // Save folder open state to localStorage when it changes
   useEffect(() => {
     if (!isAuthenticated) {
-      try {
-        localStorage.setItem(`folder_state_${id}`, JSON.stringify(isOpen));
-        
-        // Important: Also ensure counter data is preserved
-        counters.forEach(counter => {
-          const counterData = localStorage.getItem(`counter_${counter.id}`);
-          if (counterData) {
-            // Re-save the counter data to prevent removal
-            localStorage.setItem(`counter_${counter.id}`, counterData);
-          }
-        });
-      } catch (error) {
-        console.error('Error saving folder state:', error);
-      }
+      localStorage.setItem(`folder_state_${id}`, JSON.stringify(isOpen));
     }
-  }, [isOpen, id, isAuthenticated, counters]);
+  }, [isOpen, id, isAuthenticated]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     event.stopPropagation();
@@ -174,12 +157,11 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
     }
   }, [isAddingCounter]);
 
-  // Only remove folder state on deletion, not counter data
+  // Add cleanup when folder is deleted
   useEffect(() => {
     return () => {
       if (!isAuthenticated) {
         localStorage.removeItem(`folder_state_${id}`);
-        // Do NOT remove counter data here
       }
     };
   }, [id, isAuthenticated]);
