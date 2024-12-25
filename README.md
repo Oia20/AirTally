@@ -1,6 +1,7 @@
 TODO:
 
-- [ ] Landing page
+- [x] Landing page
+- [ ] debug themes being incorrect on some pages.
 ________________________________
 Connected items:
 - [ ] Open up increment endpoint to an external API.

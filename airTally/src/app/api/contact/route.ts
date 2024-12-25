@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const FORMBEE_API_KEY = process.env.FORMBEE_API_KEY;
+const FORMBEE_API_KEY: string = process.env.FORMBEE_API_KEY || '';
 
 if (!FORMBEE_API_KEY) {
   throw new Error('FORMBEE_API_KEY is not defined');
