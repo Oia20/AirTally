@@ -1,6 +1,6 @@
 TODO:
 
-- [ ] Persist counters on localhost
+- [x] Persist counters on localhost
 - [ ] Privacy Policy
 - [ ] Terms of Service
 - [ ] Landing page
