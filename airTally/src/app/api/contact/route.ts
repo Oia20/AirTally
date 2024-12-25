@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 
-if (!process.env.FORMBEE_API_KEY) {
+const FORMBEE_API_KEY = process.env.FORMBEE_API_KEY;
+
+if (!FORMBEE_API_KEY) {
   throw new Error('FORMBEE_API_KEY is not defined');
 }
 
@@ -23,7 +25,7 @@ export async function POST(req: Request) {
 
     console.log('Sending to FormBee:', formData);
 
-    const formBeeResponse = await fetch(`https://api.formbee.dev/formbee/${process.env.FORMBEE_API_KEY}`, {
+    const formBeeResponse = await fetch(`https://api.formbee.dev/formbee/${FORMBEE_API_KEY}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
