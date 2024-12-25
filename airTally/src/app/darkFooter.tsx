@@ -44,7 +44,7 @@ const DarkFooter = () => {
               Terms of Service
             </Link>
             <Link
-              href="/cookies"
+              href="/cookie"
               className="hover:text-violet-400 transition-colors duration-200"
             >
               Cookie Policy
