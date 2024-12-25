@@ -57,7 +57,7 @@ const Footer = () => {
               Privacy Policy
             </Link>
             <Link
-              href="/terms"
+              href="/tos"
               className={`${
                 isDarkMode ? 'hover:text-violet-400' : 'hover:text-violet-600'
               } transition-colors duration-200`}

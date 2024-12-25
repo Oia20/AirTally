@@ -38,7 +38,7 @@ const DarkFooter = () => {
               Privacy Policy
             </Link>
             <Link
-              href="/terms"
+              href="/tos"
               className="hover:text-violet-400 transition-colors duration-200"
             >
               Terms of Service
