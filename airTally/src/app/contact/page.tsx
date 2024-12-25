@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import DarkFooter from "../darkFooter";
-
+import DarkNavbar from "../darkNav";
 export default function Contact() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -69,6 +69,7 @@ export default function Contact() {
 
   return (
     <>
+    <DarkNavbar />
       <div className="min-h-screen flex flex-col bg-gray-900">
         <div className="flex-grow flex items-center justify-center px-4 py-12">
           <div className="max-w-2xl w-full space-y-8 p-8 bg-gray-800/90 rounded-xl shadow border border-gray-700">

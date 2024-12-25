@@ -6,4 +6,5 @@ TODO:
 - [ ] Landing page
 - [ ] Open up increment endpoint to an external API.
 - [ ] Docs
-- [ ] Contact page, make sure to link to privacy policy, cookie policy, and Terms of Service.
+- [x] Contact page, make sure to link to privacy policy, cookie policy, and Terms of Service.
+- [ ] Oauth/debug jwt signouts

@@ -56,12 +56,12 @@ const DarkFooter = () => {
             <h3 className="text-fuchsia-400 font-semibold mb-2">
               Resources
             </h3>
-            <Link
+            {/* <Link
               href="/docs"
               className="hover:text-violet-400 transition-colors duration-200"
             >
               Documentation
-            </Link>
+            </Link> */}
             <Link
               href="/contact"
               className="hover:text-violet-400 transition-colors duration-200"

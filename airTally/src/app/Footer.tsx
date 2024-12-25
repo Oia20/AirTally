@@ -81,14 +81,14 @@ const Footer = () => {
             } font-semibold mb-2`}>
               Resources
             </h3>
-            <Link
+            {/* <Link
               href="/docs"
               className={`${
                 isDarkMode ? 'hover:text-violet-400' : 'hover:text-violet-600'
               } transition-colors duration-200`}
             >
               Documentation
-            </Link>
+            </Link> */}
             <Link
               href="/contact"
               className={`${

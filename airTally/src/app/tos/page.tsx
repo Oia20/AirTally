@@ -1,9 +1,11 @@
 "use client";
 import DarkFooter from "../darkFooter";
+import DarkNavbar from "../darkNav";
 
 const TermsOfService = () => {
   return (
     <>
+    <DarkNavbar />
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-gray-900">
       <div className="max-w-4xl mx-auto bg-gray-800/80 border-gray-700 p-6 sm:p-8 rounded-xl shadow-lg border backdrop-blur-sm">
         <h1 className="text-4xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-violet-400">
