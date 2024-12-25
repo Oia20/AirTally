@@ -90,16 +90,16 @@ const PrivacyPolicy = () => {
 
           <section className="space-y-4 bg-gray-800/50 p-6 rounded-lg border border-gray-700/50 hover:border-fuchsia-500/20 transition-colors duration-300">
             <h2 className="text-2xl font-semibold text-fuchsia-400">
-              Contact Us
+              Contact Me
             </h2>
             <p className="text-gray-300">
-              If you have any questions about this Privacy Policy, please contact us at:
+              If you have any questions about this Privacy Policy, shoot me a message!
             </p>
             <a 
-              href="mailto:privacy@airtally.com"
+              href="/contact"
               className="inline-block text-violet-400 hover:text-fuchsia-400 transition-colors duration-200 hover:underline"
             >
-              privacy@airtally.com
+              Contact Me
             </a>
           </section>
 

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DarkFooter from "../darkFooter";
 
 export default function Contact() {
@@ -8,24 +8,55 @@ export default function Contact() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [captchaDone, setCaptchaDone] = useState(false);
+
+  useEffect(() => {
+    // Dynamically import altcha only on the client side
+    import('altcha').then(() => {
+      // Add event listener for captcha state changes
+      const altcha = document.querySelector('.altcha');
+      if (altcha) {
+        altcha.addEventListener('statechange', (ev: any) => {
+          console.log('Captcha state changed:', ev.detail.state); // Debug log
+          if (ev.detail.state === 'verified') {
+            setCaptchaDone(true);
+          }
+        });
+      }
+    });
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    console.log('Submit attempted. Captcha done:', captchaDone); // Debug log
+
+    if (!captchaDone) {
+      setError('Please complete the captcha');
+      return;
+    }
+
     setError('');
     setSuccess('');
     setLoading(true);
 
     try {
-      // TODO: Implement your contact form submission logic here
-      await fetch('api/contact', {
+      const response = await fetch('api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, message }),
-      }).then(res => res.json()).then(data => {
-        console.log(data);
+        body: JSON.stringify({ 
+          email, 
+          message,
+        }),
       });
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+      
       setSuccess('Thank you for your message. We\'ll get back to you soon!');
       setEmail('');
       setMessage('');
@@ -43,10 +74,10 @@ export default function Contact() {
           <div className="max-w-2xl w-full space-y-8 p-8 bg-gray-800/90 rounded-xl shadow border border-gray-700">
             <div>
               <h1 className="text-3xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-violet-400">
-                Contact Us
+                Contact Me
               </h1>
-              <p className="mt-2 text-center text-gray-300">
-                Have questions? We'd love to hear from you.
+              <p className="mt-6 text-center text-gray-300">
+                Hey I'm <span onClick={() => window.open('https://github.com/Oia20', '_blank')} className="hover:cursor-pointer text-violet-400 font-bold hover:text-violet-300 transition-colors duration-200 hover:underline">Oia</span>, software developer, and creator of AirTally. Shoot me a message!
               </p>
             </div>
 
@@ -54,8 +85,6 @@ export default function Contact() {
             {success && <p className="text-green-400 text-center">{success}</p>}
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-
-
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-300">
                   Email
@@ -84,6 +113,14 @@ export default function Contact() {
                 />
               </div>
 
+              <div className="mb-4 flex justify-center w-full hover:cursor-pointer">
+                <altcha-widget
+                  class="altcha"
+                  challengeurl="/api/challenge"
+                  hidelogo
+                ></altcha-widget>
+              </div>
+
               <div className="space-y-4">
                 <button
                   type="submit"
@@ -93,22 +130,13 @@ export default function Contact() {
                   {loading ? 'Sending...' : 'Send Message'}
                 </button>
 
-                <p className="text-sm text-center text-gray-400">
-                  By contacting us, you agree to our{' '}
-                  <a href="/privacy" className="text-violet-400 hover:text-violet-300 transition-colors duration-200">
-                    Privacy Policy
-                  </a>
-                  {' '}and{' '}
-                  <a href="/tos" className="text-violet-400 hover:text-violet-300 transition-colors duration-200">
-                    Terms of Service
-                  </a>
-                </p>
+
               </div>
             </form>
           </div>
         </div>
-        <DarkFooter />
       </div>
-    </>
+      <DarkFooter />
+      </>
   );
 }

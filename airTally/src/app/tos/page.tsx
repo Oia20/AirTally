@@ -109,13 +109,9 @@ const TermsOfService = () => {
                   GitHub repository
                 </a>
               </li>
-              <li className="text-gray-300">
-                Email us at{" "}
-                <a 
-                  href="mailto:support@airtally.com"
-                  className="text-violet-400 hover:text-fuchsia-400 transition-colors duration-200 hover:underline"
-                >
-                  support@airtally.com
+              <li className="text-violet-400 hover:text-fuchsia-400 transition-colors duration-200 hover:underline">
+                <a href="/contact">
+                  Shoot me a message
                 </a>
               </li>
             </ul>
