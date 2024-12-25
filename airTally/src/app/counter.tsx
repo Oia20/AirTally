@@ -25,7 +25,7 @@ const Counter = ({ id, name, incrementBy, initialValue, onDelete, viewMode = 'ca
   
   // Initialize state from localStorage first, fall back to initialValue
   const getInitialState = () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated && !id.includes('demo')) {
       const savedData = localStorage.getItem(`counter_${id}`);
       if (savedData) {
         const { count: savedCount, step: savedStep } = JSON.parse(savedData);

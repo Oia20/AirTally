@@ -32,7 +32,7 @@ const Footer = () => {
               Home
             </Link>
             <Link
-              href="/learn"
+              href="/about"
               className={`${
                 isDarkMode ? 'hover:text-violet-400' : 'hover:text-violet-600'
               } transition-colors duration-200`}

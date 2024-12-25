@@ -19,7 +19,7 @@ const DarkFooter = () => {
               Home
             </Link>
             <Link
-              href="/learn"
+              href="/about"
               className="hover:text-violet-400 transition-colors duration-200"
             >
               Learn More

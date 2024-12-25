@@ -17,6 +17,10 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "AirTally",
   description: "The web app for counting... Anything!",
+
+  icons: {
+    icon: "/AirTallyLogo.png",
+  },
 };
 
 export default function RootLayout({
