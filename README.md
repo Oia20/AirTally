@@ -1,6 +1,5 @@
 TODO:
 
-- [x] Landing page
 - [ ] debug themes being incorrect on some pages.
 ________________________________
 Connected items:
