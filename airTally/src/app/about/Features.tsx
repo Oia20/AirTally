@@ -19,8 +19,8 @@ const features = [
     icon: ScaleIcon,
   },
   {
-    name: 'Beautiful Interface',
-    description: 'A modern, intuitive interface that makes counting a pleasure, not a chore.',
+    name: 'Data Privacy',
+    description: 'We never share your data with anyone, and you can self host if you want!',
     icon: SparklesIcon,
   },
 ];

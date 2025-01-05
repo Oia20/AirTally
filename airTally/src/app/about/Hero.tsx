@@ -13,7 +13,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-4xl sm:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-400 to-violet-400 mt-12 leading-normal"
+            className="text-4xl sm:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-fuchsia-400 to-violet-400 mt-12 leading-normal p-12"
           >
             The Web App for Counting... Anything!
           </motion.h1>
@@ -24,7 +24,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mt-6 text-lg sm:text-xl leading-8 text-gray-300 max-w-3xl mx-auto"
           >
-            AirTally is an open-source, cloud-synced counter app that helps you track anything and everything. Simple, beautiful, and powerful.
+            AirTally is an open-source, cloud-synced counter app that helps you track anything and everything.
           </motion.p>
 
           <motion.div 
