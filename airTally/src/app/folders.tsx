@@ -98,7 +98,7 @@ const Folders = () => {
     } else {
       setTimeout(()=> {
         setIsLoading(false);
-      }, 1000)
+      }, 2000)
     }
 
     async function fetchFolders() {
