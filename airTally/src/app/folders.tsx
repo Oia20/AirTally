@@ -64,6 +64,7 @@ const Folders = () => {
   const {isLoading, setIsLoading} = useAuth();
   const [showFolderLoading, setShowFolderLoading] = useState<boolean>(false);
   const { setNewCounterLoading } = useContext(FolderContext);
+  const [noFolders, setNoFolders] = useState(false)
 
   // Initialize folders from localStorage or initialFolders
   const getInitialFolders = () => {
@@ -127,6 +128,11 @@ const Folders = () => {
       ).then((foldersWithCounters) => {
         setIsLoading(false);
         setFolders(foldersWithCounters);
+        console.log("no folders: ", foldersWithCounters)
+        if (!foldersWithCounters.length) {
+          console.log("no folders")
+          setNoFolders(true)
+        }
       });
     }
   }, [isAuthenticated, userId]);
@@ -194,6 +200,9 @@ const Folders = () => {
               },
             ]);
             setShowFolderLoading(false);
+            if (noFolders) {
+              setNoFolders(false)
+            }
           });
         });
       } else {
@@ -229,6 +238,9 @@ const Folders = () => {
         method: "DELETE",
         body: JSON.stringify({ folderId: folderId, userId: userId }),
       });
+      if (folders.length - 1 == 0) {
+        setNoFolders(true)
+      }
     }
   };
 
@@ -372,6 +384,30 @@ const Folders = () => {
                   onDeleteCounter={deleteCounter}
                 />
               ))}
+              {noFolders && (
+                <div className="text-center py-12">
+                  <div className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} space-y-4`}>
+                    <h2 className="text-2xl font-semibold mb-2">No folders yet</h2>
+                    <p className="text-lg">Create your first folder to start tracking your counters!</p>
+                    {!isAddingFolder && (
+                      <Button
+                        onClick={() => setIsAddingFolder(true)}
+                        variant="contained"
+                        sx={{
+                          backgroundColor: isDarkMode ? 'rgb(232, 121, 249)' : 'rgb(192, 38, 211)',
+                          '&:hover': {
+                            backgroundColor: isDarkMode ? 'rgb(217, 70, 239)' : 'rgb(134, 25, 143)'
+                          },
+                          marginTop: 2,
+                          transition: 'background-color 0.2s'
+                        }}
+                      >
+                        Create a Folder
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
               {showFolderLoading && (
                 <div className="text-center mt-12">
                   <Box sx={{ width: '100%' }}>

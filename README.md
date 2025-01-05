@@ -84,8 +84,10 @@ ________________________________
 <h2>TODO:</h2>
 
 - [ ] Improve landing page
-- [ ] Show no foldering, click to add if they have no folders
-- [ ] Show better user errors on log in/signup
+- [x] Show no foldering, click to add if they have no folders
+- [x] Show better user errors on log in/signup
+- [ ] fix bug where new counters aren't being shown.
+
 
 ________________________________
 
