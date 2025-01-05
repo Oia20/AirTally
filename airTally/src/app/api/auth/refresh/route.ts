@@ -13,21 +13,17 @@ export async function POST(req: Request) {
     
     // Verify refresh token exists in database
     const user = await prisma.user.findUnique({
-      where: { 
-        id: decoded.userId,
-        refreshToken
-      },
+      where: { id: decoded.userId },
     });
 
-    if (!user) {
+    if (!user || user.refreshToken !== refreshToken) {
       return new Response("Invalid refresh token", { status: 403 });
     }
 
-    // Issue new access token
     const accessToken = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET!,
-      { expiresIn: "15m" }
+      { expiresIn: "7d" }
     );
 
     return new Response(JSON.stringify({ accessToken }), { status: 200 });

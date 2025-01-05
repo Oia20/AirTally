@@ -24,6 +24,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const storedToken = localStorage.getItem('AT_JWT');
+    const storedRefreshToken = localStorage.getItem('RT_JWT');
+    if (storedRefreshToken) {
+      setRefreshToken(storedRefreshToken);
+    }
     if (storedToken) {
       const decoded = jwt.decode(storedToken);
       if (
@@ -43,23 +47,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const refreshAccessToken = async () => {
-    if (!refreshToken) return;
+    const storedRefreshToken = localStorage.getItem('RT_JWT');
+    if (!storedRefreshToken) {
+      logout();
+      return;
+    }
 
     try {
       const response = await fetch('/api/auth/refresh', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refreshToken }),
+        body: JSON.stringify({ refreshToken: storedRefreshToken }),
       });
 
       if (response.ok) {
         const { accessToken } = await response.json();
         setToken(accessToken);
+        localStorage.setItem('AT_JWT', accessToken);
       } else {
         logout();
       }
     } catch (error) {
-      console.error(`Error refreshing access token: ${error}`);
       logout();
     }
   };
