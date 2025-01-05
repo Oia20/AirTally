@@ -11,6 +11,10 @@ export const metadata: Metadata = {
   title: 'About AirTally - Modern Open Source Counter App',
   description: 'AirTally is a modern, open-source counter app with cloud sync, beautiful interface, and powerful features. Perfect for inventory, sports, events, and more.',
   keywords: 'counter app, tally counter, digital counter, open source counter, inventory counter',
+
+  icons: {
+    icon: "/favicon.png",
+  },
 };
 
 export default function About() {

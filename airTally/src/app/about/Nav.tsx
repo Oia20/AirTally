@@ -13,7 +13,7 @@ export default function Nav() {
         >
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-400 to-fuchsia-400 flex items-center justify-center">
-              <img src="/AirTallyLogo.png" alt="AirTally Logo" className="w-full h-full rounded-lg" />
+              <img src="/favicon.png" alt="AirTally Logo" className="w-full h-full rounded-lg" />
             </div>
             <span className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-violet-400 to-fuchsia-400">
               AirTally

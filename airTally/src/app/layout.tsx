@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   description: "The web app for counting... Anything!",
 
   icons: {
-    icon: "/AirTallyLogo.png",
+    icon: "/favicon.png",
   },
 };
 
