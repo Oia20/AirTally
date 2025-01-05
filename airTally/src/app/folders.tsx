@@ -96,7 +96,9 @@ const Folders = () => {
     if (isAuthenticated && userId) {
       fetchFolders();
     } else {
-      setIsLoading(false);
+      setTimeout(()=> {
+        setIsLoading(false);
+      }, 1000)
     }
 
     async function fetchFolders() {
@@ -122,10 +124,10 @@ const Folders = () => {
             onDeleteCounter: () => {}
           };
         })
-      );
-
-      setFolders(foldersWithCounters);
-      setIsLoading(false);
+      ).then((foldersWithCounters) => {
+        setIsLoading(false);
+        setFolders(foldersWithCounters);
+      });
     }
   }, [isAuthenticated, userId]);
 
