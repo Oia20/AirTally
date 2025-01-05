@@ -83,6 +83,12 @@ ________________________________
 
 <h2>TODO:</h2>
 
+- [ ] Improve landing page
+- [ ] Show no foldering, click to add if they have no folders
+- [ ] Show better user errors on log in/signup
+
+________________________________
+
 Connected items:
 - [ ] Open up increment endpoint to an external API.
 - [ ] Docs
