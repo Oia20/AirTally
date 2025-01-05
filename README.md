@@ -86,7 +86,7 @@ ________________________________
 - [ ] Improve landing page
 - [x] Show no foldering, click to add if they have no folders
 - [x] Show better user errors on log in/signup
-- [ ] fix bug where new counters aren't being shown.
+- [x] fix bug where new counters aren't being shown.
 
 
 ________________________________

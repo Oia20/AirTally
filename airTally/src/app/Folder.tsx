@@ -186,6 +186,11 @@ const Folder = ({ id, title, counters, onDelete, onAddCounter, onDeleteCounter, 
     handleCloseDeleteDialog();
   };
 
+  // Update folderCounters when counters prop changes
+  useEffect(() => {
+    setFolderCounters(counters);
+  }, [counters]);
+
   return (
     <div className={`${
       isDarkMode 
