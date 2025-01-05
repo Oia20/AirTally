@@ -53,7 +53,7 @@ export default function Home() {
       router.push('/');
     } catch (err) {
       console.error('Login error:', err);
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError('incorrect password or username');
     } finally {
       setLoading(false);
     }

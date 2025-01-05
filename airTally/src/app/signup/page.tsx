@@ -42,7 +42,7 @@ export default function Home() {
       await signUp(email, password);
       router.push('/login'); // Redirect to login after successful signup
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setError('something went wrong');
     } finally {
       setLoading(false);
     }
