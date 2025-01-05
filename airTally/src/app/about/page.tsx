@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   keywords: 'counter app, tally counter, digital counter, open source counter, inventory counter',
 
   icons: {
-    icon: "/favicon.png",
+    icon: "/favicon.ico",
   },
 };
 
