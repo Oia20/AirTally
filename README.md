@@ -61,6 +61,9 @@ npx prisma generate
 npx prisma db push
 ```
 
+<h4>With that you should be all up and running</h4>
+
+
 <h2>🌱 Contributing</h2> <p>We welcome contributions! Feel free to open an issue or submit a pull request if you'd like to help improve AirTally</p> <ul> <li>Fork the repository</li> <li>Create a new branch (<code>git checkout -b feature-branch</code>)</li> <li>Make your changes</li> <li>Commit your changes (<code>git commit -m 'Add some feature'</code>)</li> <li>Push to the branch (<code>git push origin feature-branch</code>)</li> <li>Open a pull request</li> </ul>
 <h2>🛠 Tech Stack</h2>
 <table> 
